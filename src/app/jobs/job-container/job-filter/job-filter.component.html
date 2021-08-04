@@ -1,0 +1,30 @@
+<h3 class="grid-title"> Filters Possibilities</h3>
+<hr>
+
+<div *ngFor="let filter of filters$ | async; let i=index">
+  <div *ngIf="filter.type!=='datediff' ; else here">
+    <h5> By {{filter.name | titlecase }}: </h5>
+    <div *ngFor="let choice of filter.values.choices let j=index " class="checkbox">
+      <label>
+        <input [checked] ="choice.value" type="checkbox" (click)="onSelect(i,j)" [ngClass]="{icheck:choice.value}"> {{choice.name}}
+      </label>
+    </div>
+  </div>
+  <ng-template #here>
+
+    <div ngbDropdown class="btn-group d-inline-block " style="padding-left:0px;padding-bottom:10px;">
+      <button class="btn btn-outline-primary" id="dropdownBasic1" ngbDropdownToggle> Filter By {{filter.name}}</button>
+      <div ngbDropdownMenu aria-labelledby="dropdownBasic1">
+        <button type="select" *ngFor="let choice of filter.values.choices; let j=index" (click)="onSelect(i,j)" ngbDropdownItem>{{choice.name}}</button>
+      </div>
+    </div>
+  </ng-template>
+</div>
+
+<div class="padding"></div>
+
+<div class="padding"></div>
+By Salary
+<!-- BEGIN FILTER BY SALARY -->
+<input type="range" name="range" #t  min="100" max="30000" step="200"/>
+<!-- END FILTER BY SALARY -->

@@ -1,0 +1,12 @@
+<div class="d-flex justify-content-between p-2">
+  <ngb-pagination [collectionSize]="collectionSize" [(page)]="currentPage" [pageSize]="pageSize" (pageChange)="paginate()">
+  </ngb-pagination>
+
+  <select class="custom-select" style="width: auto" [(ngModel)]="pageSize" (ngModelChange)="paginate()">
+    <option [ngValue]="2">2 jobs par page</option>
+    <option [ngValue]="4">4 jobs par page</option>
+    <option [ngValue]="6">6 jobs par page</option>
+    <option [ngValue]="10">10 jobs par page</option>
+    <option [ngValue]="20">20 jobs par page</option>
+  </select>
+</div>
