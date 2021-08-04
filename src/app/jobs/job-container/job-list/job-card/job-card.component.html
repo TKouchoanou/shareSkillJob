@@ -1,1 +1,29 @@
-<p>job-card works!</p>
+<div class="card cardo" *ngIf="job">
+  <div class="card-header bg-transparent "><small> {{job.company}} {{job.town}} </small> <br>
+    {{job.salary}} {{job.devise}}
+  </div>
+
+  <div class="card-body">
+    <h5 class="card-title"><a href="search/card">{{job.title}}</a></h5>
+    <p class="card-text">
+      <small> Proposed by : </small> {{job.company}}<br>
+      <span *ngIf="job.field">
+                    Field: {{job.field}}
+                    </span>
+      Type : {{job.type}}
+      <i *ngIf="job.level">
+        Level : {{job.level}}<br>
+      </i>
+      <em *ngIf="job.skills && job.skills.length>0">
+        Skills: {{job.skills.join(',')}}
+      </em>
+      <br>
+      Description : {{job.descriptionJob}}
+    </p>
+
+    <a href="#" class="btn btn-primary">View Job</a>
+  </div>
+  <div class="card-footer">
+    <small class="text-muted"> publicate date : {{job.pubDate| date:'medium'}} </small>
+  </div>
+</div>

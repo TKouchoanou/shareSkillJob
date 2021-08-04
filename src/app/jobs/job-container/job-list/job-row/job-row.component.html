@@ -1,1 +1,22 @@
-<p>job-row works!</p>
+<tr  *ngIf="job ">
+  <td class="number text-center">{{job.id}}
+  </td>
+  <td class="product">
+    <strong><a href="#">{{job.title}}</a></strong>
+    <small> Proposed by : </small> {{job.company}}<br>
+    <span *ngIf="job.field">
+                    Field: {{job.field}}
+                    </span>
+    Type : {{job.type}}
+    <i *ngIf="job.level">
+      Level : {{job.level}}<br>
+    </i>
+    <em *ngIf="job.skills && job.skills.length>0">
+      Skills: {{job.skills.join(',')}}
+    </em>
+    publicate date : {{job.pubDate|  date:'medium'}}
+  </td>
+  <td class="price text-right">
+    <small> {{job.company}} {{job.town}} </small> <br>
+    {{job.salary}} {{job.devise}}</td>
+</tr>

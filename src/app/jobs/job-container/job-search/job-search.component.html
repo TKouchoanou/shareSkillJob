@@ -1,1 +1,7 @@
-<p>job-search works!</p>
+<div class="input-group">
+  <input  [(ngModel)]="q" type="text" class="form-control" value="web development">
+  <span class="input-group-btn">
+                <button class="btn btn-primary" type="button"><i class="fa fa-search"></i></button>
+              </span>
+</div>
+<p>You will get soon all results matching "{{q}}" juste be patience</p>
