@@ -1,5 +1,17 @@
 import { Component, OnInit } from '@angular/core';
+import {AbstractControl, FormArray, FormBuilder, FormGroup, Validators} from "@angular/forms";
+import {JobsService} from "../../shared/services/jobs.service";
+import {ActivatedRoute, Router} from "@angular/router"
+import {Job} from "../../shared/interfaces/job.interface";
+import {filters} from "../../shared/filter/job/abstract.job.filter";
 
+interface Input {
+  name: string;
+  type: string;
+  options?: any[];
+  text?: string;
+  control?: AbstractControl;
+}
 @Component({
   selector: 'app-job-form',
   templateUrl: './job-form.component.html',
@@ -7,9 +19,173 @@ import { Component, OnInit } from '@angular/core';
 })
 export class JobFormComponent implements OnInit {
 
-  constructor() { }
+  jobForm: FormGroup;
+  inputs: Input[] = [
+    { name: "title", type: "text" },
+    { name: "salary", type: "text" },
+    { name: "devise", type: "text" },
+    { name: "field", type: "select", options: [] },
+    { name: "level", type: "select",options: [] },
+    { name: "type", type: "radio", text:"Type de contrat :", options: [] },
+    { name: "company", type: "text" },
+    { name: "adresse", type: "text" },
+    { name: "town", type: "select",options: [] },
+    { name: "descriptionJob", type: "textarea",text:"description of job"},
+    { name: "descriptionProfil", type: "textarea",text:"description of profil for job" }
+  ];
 
-  ngOnInit(): void {
+  constructor(
+    private formBuilder: FormBuilder,
+    private route: ActivatedRoute,
+    private router: Router,
+    private jobService :JobsService
+  ) {}
+
+  ngOnInit() {
+    this.initjobForm();
+    for (let input of this.inputs) {
+      input.control = this.jobForm.get(input.name);
+      if(input.options){
+        input.options= this.extractOptions(input.name);
+      }
+    }
+  }
+
+  ngOnDestroy() {}
+
+  onSubmitForm() {
+    let job:Job=this.formToJob(this.jobForm);
+    this.jobService.persist(job);
+    this.jobService.flush();
+    this.router.navigate(["/"]);
+  }
+
+  /**
+   * retourne un job à partir du formulaire
+   */
+  formToJob(form:FormGroup):Job{
+    let job={};
+    for(let key in form.value){
+      job[key]=form.value[key];
+    }
+    job['pubDate']=new Date();
+    return job as Job;
+  }
+
+  /**
+   * initialise manuellement le formaulaire
+   */
+  initjobForm() {
+    this.jobForm = this.formBuilder.group(
+      {
+        title: ["Dev", Validators.required],
+        salary: [
+          1000,
+          [Validators.required, Validators.pattern(new RegExp("^\\d+$"))]
+        ],
+        devise: "",
+        skills: this.formBuilder.array([]),
+        field: "",
+        level: "",
+        type: ["", Validators.required],
+        company: "",
+        adresse: "",
+        town: "",
+        contacts: this.formBuilder.group(
+          {
+            emails: this.formBuilder.array([]),
+            phones: this.formBuilder.array([])
+          },
+          { validators: [Validators.required, this.contactValidator] }
+        ),
+        descriptionJob: ["", { validators: [Validators.minLength(20),Validators.required] }],
+        descriptionProfil: ""
+      },
+      { validators: Validators.required }
+    );
+    //quelques required ne servent à rien c'est juste pour utiliser la syntaxe
+  }
+
+  /**
+   * valide les contacts
+   * un contact est invalide s'il n'y a ni num de phone ni email
+   * il faut aumoin un numéro ou un emails
+   */
+  contactValidator(g: FormGroup) { console.log(g.parent)
+    return g.get("emails").value.length === 0 &&
+    g.get("phones").value.length === 0
+      ? { contact: true, message: "Malo need a least one contact" }
+      : null;
+  }
+
+  /**
+   * recupère le controle de contacts
+   */
+  get contacts(): FormGroup {
+    return this.jobForm.get("contacts") as FormGroup;
+  }
+
+  /**
+   other possibilities : this.jobForm.get(['contacts','emails'])
+   ou this.jobForm.get('contacts.emails') as FormArray;
+   **/
+  get emails(): FormArray {
+    return this.contacts.get("emails") as FormArray;
+  }
+
+  /**
+   * controles de phones
+   */
+  get phones(): FormArray {
+    return this.jobForm.get("contacts.phones") as FormArray;
+  }
+
+  /**
+   * controles de skills
+   */
+  get skills(): FormArray {
+    return this.jobForm.get("skills") as FormArray;
+  }
+
+  /**
+   * ajout dynamique de numéro de téléphone
+   */
+  onAddPhone() {
+    let newPhone = this.formBuilder.control(null, Validators.required);
+    this.phones.push(newPhone);
+  }
+
+  /**
+   * ajout dynamique d'email
+   * pour des raisons d'accèssibilité il faut toujours rajouter
+   * le required dans l'input du formulaire malgré que c'est
+   * pas nécéssaire pour la validation https://angular.io/guide/form-validation
+   */
+  onAddEmail() {
+    let newEmail = this.formBuilder.control(null, {
+      validators: [Validators.required, Validators.email]
+    });
+    this.emails.push(newEmail);
+  }
+  /**
+   * ajout dynamique d'une compétence
+   */
+  onAddSkill() {
+    let newSkill = this.formBuilder.control(null, Validators.required);
+    this.skills.push(newSkill);
+  }
+
+  /**
+   * recupère les options des filtres
+   */
+  extractOptions(name: string): any[] {
+    return filters
+      .find(filter => {
+        return filter.name == name;
+      })
+      .values.map(ob => {
+        return ob.name;
+      });
   }
 
 }

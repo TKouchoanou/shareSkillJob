@@ -6,18 +6,21 @@ import {JobsModule} from "./jobs/jobs.module";
 import { HttpClientModule } from "@angular/common/http";
 
 import { AppComponent } from './app.component';
-import { PaginatePipe } from './shared/pipes/paginate.pipe';
-import { SearchPipe } from './shared/pipes/search.pipe';
-import { FilterByPipe } from './shared/pipes/filter-by.pipe';
-import { SortByPipe } from './shared/pipes/sort-by.pipe';
 
+import {RouterModule, Routes} from "@angular/router";
+import {JobContainerComponent} from "./jobs/job-container/job-container.component";
+import {JobFormComponent} from "./jobs/job-form/job-form.component";
+
+const APP_ROOT:Routes=[{path:'jobs',component:JobContainerComponent},
+                       {path:'new', component:JobFormComponent},
+                       {path:'',redirectTo:'jobs',pathMatch:'full'} ]
 
 @NgModule({
   declarations: [
     AppComponent
   ],
   imports: [
-    BrowserModule, NgbModule, FormsModule, JobsModule, HttpClientModule
+    BrowserModule, NgbModule, FormsModule, JobsModule, HttpClientModule,RouterModule.forRoot(APP_ROOT)
   ],
   providers: [],
   exports: [

@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { NgbModule } from "@ng-bootstrap/ng-bootstrap";
-import { FormsModule } from "@angular/forms";
+import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import { CommonModule } from '@angular/common';
 
 
@@ -26,9 +26,13 @@ import {PaginatePipe} from "../shared/pipes/paginate.pipe";
 import {SearchPipe} from "../shared/pipes/search.pipe";
 import {FilterByPipe} from "../shared/pipes/filter-by.pipe";
 import {SortByPipe} from "../shared/pipes/sort-by.pipe";
+import {Route, RouterModule} from "@angular/router";
 
-
-
+const JOB_ROUTES:Route[]=[
+  {path:'',component:JobContainerComponent,pathMatch:'full'},
+  {path:'new',component:JobContainerComponent,pathMatch:'full'},
+]
+  //RouterModule.forChild(JOB_ROUTES)
 @NgModule({
   declarations: [
     JobContainerComponent,
@@ -50,9 +54,9 @@ import {SortByPipe} from "../shared/pipes/sort-by.pipe";
     SortByPipe,
   ],
   imports: [
-    CommonModule,NgbModule,FormsModule
+    CommonModule, NgbModule, FormsModule, ReactiveFormsModule, RouterModule
   ],
-  exports :[JobContainerComponent],
+  exports :[JobContainerComponent,JobFormComponent],
   providers:[JobsService,FilterService]
 })
 export class JobsModule { }

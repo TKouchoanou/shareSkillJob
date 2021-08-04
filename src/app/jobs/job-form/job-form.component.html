@@ -1,1 +1,113 @@
-<p>job-form works!</p>
+<div class="col-sm-8 col-sm-offset-2 ">
+
+  <form [formGroup]="jobForm" (ngSubmit)="onSubmitForm()">
+
+    <h3> publish a job offer
+      <button [routerLink]="['..']" type="button" title=" go to resarch page "class="btn btn-default active"><i class="fa fa-search"></i></button>
+    </h3>
+    <br>
+    <div *ngFor="let input of inputs" class="form-group">
+
+      <div [ngSwitch]="input.type">
+
+        <div *ngSwitchCase="'textarea'">
+          <label [for]="input.name">{{input.text |titlecase}}</label><br/>
+          <textarea class="form-control" name="input.name" [id]="input.name" [formControlName]="input.name"></textarea>
+        </div>
+
+        <div *ngSwitchCase="'select'">
+          <label  [for]="input.name">{{input.name |titlecase}}</label> <br/>
+          <select class="form-control"  [id]="input.name" [formControlName]="input.name">
+            <option *ngFor="let opt of input.options" [value]="opt">{{opt|titlecase}}</option>
+          </select>
+        </div>
+
+        <div *ngSwitchCase="'radio'">
+          <p>{{input.text}}</p>
+          <div *ngFor="let opt of input.options; let i=index;">
+            <input  type="radio" [id]="opt" [formControlName]="input.name" [value]="opt">
+            <label [for]="opt">{{opt|titlecase}}</label>
+          </div>
+        </div>
+        <div *ngSwitchDefault>
+          <label  [for]="input.name">{{input.name |titlecase}}</label>
+          <input  [type]="input.type" [id]="input.name" class="form-control" [formControlName]="input.name">
+        </div>
+        <!-- debut erreur input -->
+        <div *ngIf="input.control.errors && input.control.touched" class="alert alert-danger"><br>
+          <div *ngIf="input.control.errors.minlength  else checkOther">
+            the required length is {{input.control.errors.minlength.requiredLength}} your current length is
+            {{input.control.errors.minlength.actualLength}}
+          </div>
+          <ng-template #checkOther>
+            <div *ngIf="input.control.errors.required else generalError">
+              {{input.name}} is required
+            </div>
+            <ng-template #generalError>
+              <div>{{input.name}} value is not correct</div>
+            </ng-template>
+          </ng-template>
+
+        </div>
+        <!-- fin erreurs input -->
+      </div>
+    </div>
+
+
+
+    <div formArrayName="skills">
+      <h4>Les compétences souhaitées </h4>
+      <div class="form-group" *ngFor="let skillControl of skills.controls; let i = index">
+        <input type="text" class="form-control" [formControlName]="i">
+      </div>
+      <button type="button" class="btn btn-success" (click)="onAddSkill()"><i class="fa fa-plus"></i></button>
+    </div>
+
+
+
+    <div formGroupName="contacts">
+
+      <h3> Vos contacts : </h3>
+
+      <div formArrayName="emails">
+        <h4> Emails</h4>
+        <div class="form-group" *ngFor="let emailControl of emails.controls; let i = index">
+          <input type="email" class="form-control" [formControlName]="i">
+          <small [id]="'email-'+i" class="form-text text-muted">We'll never share your email </small>
+          <!-- debut erreur email -->
+          <div *ngIf="emailControl.errors" class="alert alert-danger"><br>
+            <div *ngIf="emailControl.errors.required">
+              Email is required
+            </div>
+            <div *ngIf="emailControl.errors.email">
+              Your value is not email type
+            </div>
+          </div>
+          <!-- fin erreurs emails -->
+        </div>
+        <button type="button" class="btn btn-success" (click)="onAddEmail()"><i class="fa fa-plus"></i></button>
+      </div>
+
+
+      <div formArrayName="phones">
+        <h4> Phones</h4>
+        <div class="form-group" *ngFor="let phoneControl of phones.controls; let i = index">
+          <input type="tel" class="form-control" [formControlName]="i">
+        </div>
+        <button type="button" class="btn btn-success" (click)="onAddPhone()"><i class="fa fa-plus"></i></button>
+
+      </div>
+      <!-- debut erreur contacts -->
+      <div *ngIf="contacts.errors" class="alert alert-danger"><br>
+        <div *ngIf="contacts.errors.contact">
+          {{contacts.errors.message}}
+        </div>
+      </div>
+      <!-- fin erreurs contacts -->
+    </div>
+    <br>
+
+    <button class="btn btn-primary" type="submit" [disabled]="jobForm.invalid">Save</button>
+
+  </form>
+</div>
