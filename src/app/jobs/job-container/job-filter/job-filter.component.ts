@@ -16,12 +16,11 @@ export class JobFilterComponent implements OnInit {
    }
 
    onSelect(i:number,j:number) {
-     alert(i+' '+j);
-   this.filterService.filter(i,j);
+   this.filterService.filtersChange(i,j);
   }
 
   ngOnInit(): void {
-    this.filters$=this.filterService.filter$;
+    this.filters$=this.filterService.filters$;
   }
 
 }

@@ -14,11 +14,7 @@ import { SortByPipe } from './shared/pipes/sort-by.pipe';
 
 @NgModule({
   declarations: [
-    AppComponent,
-    PaginatePipe,
-    SearchPipe,
-    FilterByPipe,
-    SortByPipe
+    AppComponent
   ],
   imports: [
     BrowserModule, NgbModule, FormsModule, JobsModule, HttpClientModule

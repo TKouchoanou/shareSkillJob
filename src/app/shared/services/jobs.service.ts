@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
 import {Job} from "../interfaces/job.interface";
-import {BehaviorSubject,Observable} from "rxjs";
+import {BehaviorSubject, Subscription} from "rxjs";
 import {HttpClient} from "@angular/common/http";
-import { jobs } from '../data/jobs';
+import {FilterService} from "./filter.service";
+import {SearchService} from "./search.service";
 @Injectable({
   providedIn: 'root'
 })
@@ -12,24 +13,47 @@ export class JobsService {
   /**
    * emet jobs aux components qui ont souscrire
    */
-  jobs$ :BehaviorSubject<Job[]> = new BehaviorSubject<Job[]>(jobs);
+  subscription:Subscription= new Subscription();
+  jobs$ :BehaviorSubject<Job[]> = new BehaviorSubject<Job[]>([]);
+  untouchedJobs$:BehaviorSubject<Job[]> = new BehaviorSubject<Job[]>([]);
+  sortCriteria$ :BehaviorSubject<string> = new BehaviorSubject<string>(null);
 
   /**
    * Fait un appel reseau pour récupérer les données
    */
-  constructor(private httpClient: HttpClient) {
+  constructor(private httpClient: HttpClient,private filterService :FilterService,private searchService:SearchService ) {
+    this.subscribes()
     this.fetchAll();
   }
 
 
+   emit(){
+     let jobs=this.filterService.applyFilters(this.untouchedJobs$.value);
+     jobs = this.searchService.filter(jobs);
+     this.jobs$.next(jobs);
+   }
 
+
+  subscribes(){
+    this.subscription.add(
+    this.filterService.filters$.subscribe(
+      ()=>{
+        this.emit();
+      }
+    ));
+    this.subscription.add(this.searchService.searchs$.subscribe(()=>this.emit()))
+
+    this.subscription.add(this.untouchedJobs$.subscribe((joblist)=>{
+      this.emit();
+    }));
+  }
 
   /**
    * ajoute job à jobsnofilter en vue d'une
    * future sauvegarde
    */
   persist(job: Job) {
-    this.jobs$.next([...this.jobs$.value,job]);
+    this.untouchedJobs$.next([...this.untouchedJobs$.value,job]);
   }
 
   /**
@@ -47,7 +71,7 @@ export class JobsService {
       )
       .subscribe(
         joblist => {
-          this.jobs$.next(joblist.map(job => ({...job,pubDate:new Date(job.pubDate)}))) ;
+          this.untouchedJobs$.next(joblist.map(job => ({...job,pubDate:new Date(job.pubDate)}))) ;
         },
         error => {
           console.log(error);
@@ -66,8 +90,8 @@ export class JobsService {
         ".json"
       )
       .subscribe(
-        joblist => { console.log(joblist);
-          this.jobs$.next(joblist.map(job => ({...job,pubDate:new Date(job.pubDate)}))) ;
+        joblist => {  console.log('retour SERVEUR');
+          this.untouchedJobs$.next(joblist.map(job => ({...job,pubDate:new Date(job.pubDate)}))) ;
         },
         error => {
           console.log(error);

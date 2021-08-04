@@ -1,0 +1,7 @@
+<div ngbDropdown class="btn-group d-inline-block " style="padding-left:30px;padding-bottom:10px;">
+  <button class="btn btn-outline-primary" id="dropdownBasic1" ngbDropdownToggle>Order By  </button>
+  <div ngbDropdownMenu aria-labelledby="dropdownBasic1">
+    <button type="select" *ngFor="let criteria of sortCriterias" (click)="onSort(criteria)" ngbDropdownItem>{{criteria |titlecase}}</button>
+  </div>
+  <em style="padding-left:10px"> {{numfound}} results</em>
+</div>

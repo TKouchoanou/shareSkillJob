@@ -21,6 +21,11 @@ import { JobSearchComponent } from './job-container/job-search/job-search.compon
 import { JobPaginatorComponent } from './job-container/job-paginator/job-paginator.component';
 import {JobsService} from "../shared/services/jobs.service";
 import {FilterService} from "../shared/services/filter.service";
+import { JobOrderComponent } from './job-container/job-order/job-order.component';
+import {PaginatePipe} from "../shared/pipes/paginate.pipe";
+import {SearchPipe} from "../shared/pipes/search.pipe";
+import {FilterByPipe} from "../shared/pipes/filter-by.pipe";
+import {SortByPipe} from "../shared/pipes/sort-by.pipe";
 
 
 
@@ -37,7 +42,12 @@ import {FilterService} from "../shared/services/filter.service";
     JobFilterComponent,
     JobSearchComponent,
     JobPaginatorComponent,
-    SizePipe
+    JobOrderComponent,
+    SizePipe,
+    PaginatePipe,
+    SearchPipe,
+    FilterByPipe,
+    SortByPipe,
   ],
   imports: [
     CommonModule,NgbModule,FormsModule

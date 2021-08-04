@@ -5,18 +5,19 @@ import {Job} from "../../interfaces/job.interface"
 export  class Filter implements JobFilter {
   name!: string;
   values!: Values;
+  type!:string;
 
   filterFunction!:(jobs: Job[])=>Job[];
    valueFilter= (jobs:Job[]):Job[]=>{
    return  jobs.filter((job:Job)=>{
       if(this!==undefined && this.name!==undefined){
         for(let choice of this.values.choices){
-          if(choice.value && choice.name==job[this.name]){
-            return true;
+          if(!choice.value && choice.name==job[this.name]){
+            return false;
           }
         }
       }
-      return false;
+      return true;
 
     });
   }
@@ -26,10 +27,8 @@ dateDiffFilters=(jobs:Job[]):Job[]=>{
         let day = 24 * 3600 * 1000;
         let today = new Date().getTime();
         let pubdate =  job.pubDate.getTime();
-        let diff = this.values.active.value;
-
-        return pubdate < today - diff * day;
-
+        let diff = (today-pubdate)/day;
+        return this.values.active.value>=diff;
   });
 }
 
@@ -39,38 +38,38 @@ dateDiffFilters=(jobs:Job[]):Job[]=>{
       if (this !== undefined && this.name !== undefined) {
         for (let choice of this.values.choices) {
 
-          if (choice.value) {
+          if (!choice.value) {console.log(choice);
             if (
               choice.min &&
               choice.max
             ) {
-
+             console.log(job );
               if (
-                job[choice.name] >= choice.min &&
-                job[choice.name] < choice.max
+                job[this.name] >= choice.min &&
+                job[this.name] < choice.max
               ) {
-                return true; //exclut si la valeur de propriété de job appartient à l'interval dont le check est false
+                return false; //exclut si la valeur de propriété de job appartient à l'interval dont le check est false
               }
             }
             if (
               !choice.max &&
-              job[choice.name] >= choice.min
+              job[this.name] >= choice.min
             ) {
               // ici on a seulement un min , on exclut si plus grand que min
-              return true;
+              return false;
             }
           }
         }
 
       }
-      return false;
+      return true;
     });
 
     }
 
 
-  constructor(name: string, values: Values, filterNum:number=1) {
-    this.name=name; this.values=values;
+  constructor(name: string, values: Values, filterNum:number=1,type:string="value") {
+    this.name=name; this.values=values; this.type=type;
 
 
     if (filterNum==1){
@@ -97,14 +96,16 @@ dateDiffFilters=(jobs:Job[]):Job[]=>{
      for(let filter  of  filters ){
 
        if(filter.type=="value"){
-         results.push(new Filter(filter.name,new FilterValues(filter.values,1),1));
+         results.push(new Filter(filter.name,new FilterValues(filter.values,1),1,filter.type));
        }
        if(filter.type=="interval"){
-         results.push(new Filter(filter.name,new FilterValues(filter.values,1),2));
+         results.push(new Filter(filter.name,new FilterValues(filter.values,1),2,filter.type));
        }
 
        if(filter.type=="datediff"){
-         results.push(new Filter(filter.name,new FilterValues(filter.values,2),3));
+         let date=new FilterValues(filter.values,2);
+         date.active=date.choices[date.choices.length-1];
+         results.push(new Filter(filter.name,date,3,filter.type));
        }
     }
     return results;
@@ -152,7 +153,9 @@ export const filters = [
       { name: "last 7 days", value: 7, },
       { name: "last 2 weeks", value: 14},
       { name: "last 4 weeks", value: 28, },
-      { name: "last visit", value: false,  }
+      { name: "last 2 month", value: 60 },
+      { name: "last 4 month", value: 120, },
+      { name: "last 8 month", value: 240, },
     ]
   },
   {
@@ -163,7 +166,12 @@ export const filters = [
       { name: "Mathematics Teaching", value: true },
       { name: "Computer teaching", value: true },
       { name: "Developper", value: true },
-      { name: "Other", value: true }
+      {name: "data science", value: true},
+      {name:"Economics",value:true},
+      {name:"statistic",value:true},
+      {name:" web",value:true},
+      {name: "data science", value: true},
+      {name: "Other", value: true },
     ]
   },
 

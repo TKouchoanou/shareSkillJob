@@ -1,1 +1,7 @@
-<p>jobs-row works!</p>
+<div class="table-responsive">
+  <table class="table table-hover">
+    <tbody>
+    <app-job-row  *ngFor="let job of jobs$ | async | sortBy :sortCriteria : true " [job]="job"> </app-job-row>
+    </tbody>
+  </table>
+</div>

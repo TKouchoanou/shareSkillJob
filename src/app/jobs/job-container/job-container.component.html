@@ -1,4 +1,66 @@
-<p>job-container works!</p>
-<app-job-search></app-job-search>
-<app-job-paginator  [size]="jobs$ | async | size" ></app-job-paginator>
-<app-job-filter></app-job-filter>
+
+<div class="container">
+  <div class="row">
+    <!-- BEGIN SEARCH RESULT -->
+    <div class="col-md-12">
+      <div class="grid search">
+        <div class="grid-body">
+          <div class="row">
+            <!-- BEGIN FILTERS -->
+            <!--  -->
+            <div class="col-md-3">
+              <app-job-filter></app-job-filter>
+              <!-- END FILTERS -->
+              <!-- BEGIN RESULT -->
+            </div>
+            <div class="col-md-9">
+              <h2> Result</h2>
+              <hr>
+              <!-- BEGIN SEARCH INPUT -->
+              <app-job-search></app-job-search>
+              <!-- END SEARCH INPUT -->
+
+
+              <div class="padding"></div>
+
+              <div class="row">
+                <!-- BEGIN ORDER RESULT -->
+                <div class="col-md-6">
+                <app-job-order  [numfound]="jobs$ | async | size"  (sort)="onSort($event)"></app-job-order>
+
+                  <!-- END ORDER RESULT
+               -->
+                </div>
+                <div class="col-md-6 text-right">
+                  <div class="btn-group">
+                    <button   type="button"  class="btn btn-default active"><i class="fa fa-list"> </i></button>
+                    <button  type="button" class="btn btn-default"><i class="fa fa-th"></i></button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- BEGIN TABLE RESULT
+            <app-search-results-rows></app-search-results-rows>
+            -->
+              <div style="background-color:green "></div>
+              <!--  <app-search-result-new-row></app-search-result-new-row>
+              <router-outlet name="card"> </router-outlet>
+              -->
+
+              <app-job-list></app-job-list>
+              <!-- END TABLE RESULT -->
+
+              <!-- BEGIN PAGINATION -->
+
+              <app-job-paginator  [size]="jobs$ | async | size" ></app-job-paginator>
+              <!-- END PAGINATION -->
+            </div>
+            <!-- END RESULT -->
+          </div>
+        </div>
+
+      </div>
+    </div>
+    <!-- END SEARCH RESULT -->
+  </div>
+</div>
