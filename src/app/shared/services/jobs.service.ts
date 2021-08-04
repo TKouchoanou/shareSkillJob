@@ -4,6 +4,7 @@ import {BehaviorSubject, Subscription} from "rxjs";
 import {HttpClient} from "@angular/common/http";
 import {FilterService} from "./filter.service";
 import {SearchService} from "./search.service";
+import {first, map} from "rxjs/operators";
 @Injectable({
   providedIn: 'root'
 })
@@ -88,9 +89,22 @@ export class JobsService {
         "https://fir-maloprojet-default-rtdb.europe-west1.firebasedatabase.app/" +
         this.db_name +
         ".json"
-      )
+      ).pipe( map((joblist)=>{
+
+         return joblist.map((job)=>{
+           //pour chaque job on adapte le skill
+           job.skills=job.skills.map((skill)=>{
+             if(typeof skill==="string"){
+               return {skill:skill,level:Math.random()*100*6+2>300?'stater':'confirmed'}
+             }
+             return  skill;
+           })
+
+           return job;
+         })
+    }), first())
       .subscribe(
-        joblist => {  console.log('retour SERVEUR');
+        joblist => {
           this.untouchedJobs$.next(joblist.map(job => ({...job,pubDate:new Date(job.pubDate)}))) ;
         },
         error => {

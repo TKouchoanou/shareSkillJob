@@ -4,7 +4,7 @@
   </div>
 
   <div class="card-body">
-    <h5 class="card-title"><a href="search/card">{{job.title}}</a></h5>
+    <h5 class="card-title"><span style="color: #007bff">{{job.title}}</span></h5>
     <p class="card-text">
       <small> Proposed by : </small> {{job.company}}<br>
       <span *ngIf="job.field">
@@ -15,7 +15,7 @@
         Level : {{job.level}}<br>
       </i>
       <em *ngIf="job.skills && job.skills.length>0">
-        Skills: {{job.skills.join(',')}}
+        Skills: {{ job.skills | toStr}}
       </em>
       <br>
       Description : {{job.descriptionJob}}

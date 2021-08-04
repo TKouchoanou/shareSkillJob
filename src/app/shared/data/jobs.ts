@@ -1,6 +1,6 @@
 import {Job} from "../interfaces/job.interface";
 
-export const jobs: Job[] = [
+export const jobs= [
   {
     id: 1,
     title: "Data-science eenginer Nice",
@@ -200,3 +200,4 @@ export const jobs: Job[] = [
     descriptionProfil: "motivate persons"
   }
 ];
+

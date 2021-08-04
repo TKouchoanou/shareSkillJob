@@ -23,7 +23,7 @@ import {JobsService} from "../shared/services/jobs.service";
 import {FilterService} from "../shared/services/filter.service";
 import { JobOrderComponent } from './job-container/job-order/job-order.component';
 import {PaginatePipe} from "../shared/pipes/paginate.pipe";
-import {SearchPipe} from "../shared/pipes/search.pipe";
+import {TostrPipe} from "../shared/pipes/tostr.pipe";
 import {FilterByPipe} from "../shared/pipes/filter-by.pipe";
 import {SortByPipe} from "../shared/pipes/sort-by.pipe";
 import {Route, RouterModule} from "@angular/router";
@@ -49,7 +49,7 @@ const JOB_ROUTES:Route[]=[
     JobOrderComponent,
     SizePipe,
     PaginatePipe,
-    SearchPipe,
+    TostrPipe,
     FilterByPipe,
     SortByPipe,
   ],

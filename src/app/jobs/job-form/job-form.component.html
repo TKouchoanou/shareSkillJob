@@ -57,10 +57,17 @@
 
     <div formArrayName="skills">
       <h4>Les compétences souhaitées </h4>
-      <div class="form-group" *ngFor="let skillControl of skills.controls; let i = index">
-        <input type="text" class="form-control" [formControlName]="i">
+      <div  [formGroupName]="i"  class="form-group" *ngFor="let skillControl of skills.controls; let i = index">
+        <div class="form-row">
+          <div class="col">
+            <input type="text" formControlName="competence" class="form-control" placeholder="Compétence ex:Angulat">
+          </div>
+          <div class="col">
+            <input type="text" formControlName="niveau" class="form-control" placeholder="Niveau: ex:Confirmé">
+          </div>
+        </div>
       </div>
-      <button type="button" class="btn btn-success" (click)="onAddSkill()"><i class="fa fa-plus"></i></button>
+      <button type="button" class="btn btn-success" (click)="onAddSkill()" [disabled]="!skills.valid"><i class="fa fa-plus"></i></button>
     </div>
 
 

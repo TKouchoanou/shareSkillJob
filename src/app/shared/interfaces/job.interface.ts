@@ -3,7 +3,7 @@ export interface Job {
   title: string;
   salary: number;
   devise: string;
-  skills: Array<string>;
+  skills: Array<{skill:string;level:string} | string>;
   field: string;
   level: string;
   type: string;

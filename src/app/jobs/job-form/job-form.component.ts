@@ -4,7 +4,21 @@ import {JobsService} from "../../shared/services/jobs.service";
 import {ActivatedRoute, Router} from "@angular/router"
 import {Job} from "../../shared/interfaces/job.interface";
 import {filters} from "../../shared/filter/job/abstract.job.filter";
-
+const defaultJob:Job={
+  title: "Angular Developer",
+  salary: 0,
+  devise: "euro",
+  skills: [{skill:"Anular", level:"confirmed"}],
+  field: "",
+  level: "confirmed",
+  type: "CDI : Contract of indefinite duration",
+  company: "",
+  adresse: "75 Avenue Charles de Gaulle",
+  town: "Paris",
+  contacts: { emails: [], phones: [] },
+  descriptionJob: "",
+  descriptionProfil: ""
+}
 interface Input {
   name: string;
   type: string;
@@ -75,22 +89,22 @@ export class JobFormComponent implements OnInit {
   /**
    * initialise manuellement le formaulaire
    */
-  initjobForm() {
+  initjobForm(job:Job=defaultJob) {
     this.jobForm = this.formBuilder.group(
       {
-        title: ["Dev", Validators.required],
+        title: [job.title, Validators.required],
         salary: [
-          1000,
+          job.salary,
           [Validators.required, Validators.pattern(new RegExp("^\\d+$"))]
         ],
-        devise: "",
+        devise: job.devise,
         skills: this.formBuilder.array([]),
-        field: "",
-        level: "",
+        field: job.field,
+        level: job.level,
         type: ["", Validators.required],
-        company: "",
-        adresse: "",
-        town: "",
+        company: job.company,
+        adresse: job.adresse,
+        town: job.town,
         contacts: this.formBuilder.group(
           {
             emails: this.formBuilder.array([]),
@@ -98,12 +112,15 @@ export class JobFormComponent implements OnInit {
           },
           { validators: [Validators.required, this.contactValidator] }
         ),
-        descriptionJob: ["", { validators: [Validators.minLength(20),Validators.required] }],
-        descriptionProfil: ""
+        descriptionJob: [job.descriptionJob, { validators: [Validators.minLength(10),Validators.required] }],
+        descriptionProfil: job.descriptionProfil
       },
       { validators: Validators.required }
     );
-    //quelques required ne servent à rien c'est juste pour utiliser la syntaxe
+  }
+
+  skillsToFormGroup(skill:{skill:string,level:string}={skill:"",level:""}){
+    return this.formBuilder.group({competence:[skill.skill,[Validators.required]],niveau:[skill.level,[Validators.required]]})
   }
 
   /**
@@ -171,7 +188,7 @@ export class JobFormComponent implements OnInit {
    * ajout dynamique d'une compétence
    */
   onAddSkill() {
-    let newSkill = this.formBuilder.control(null, Validators.required);
+    let newSkill = this.skillsToFormGroup();
     this.skills.push(newSkill);
   }
 
