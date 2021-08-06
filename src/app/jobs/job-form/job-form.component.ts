@@ -6,18 +6,18 @@ import {Job} from "../../shared/interfaces/job.interface";
 import {filters} from "../../shared/filter/job/abstract.job.filter";
 const defaultJob:Job={
   title: "Angular Developer",
-  salary: 0,
+  salary: 3000,
   devise: "euro",
-  skills: [{skill:"Anular", level:"confirmed"}],
+  skills: [{skill:"Angular", level:"confirmed"}],
   field: "",
   level: "confirmed",
   type: "CDI : Contract of indefinite duration",
-  company: "",
+  company: "Google",
   adresse: "75 Avenue Charles de Gaulle",
   town: "Paris",
   contacts: { emails: [], phones: [] },
-  descriptionJob: "",
-  descriptionProfil: ""
+  descriptionJob: "Lorem ipsum dolor sit amet. Sit quibusdam dolor et tempore veniam hic nemo consequatur et explicabo consequatur qui laudantium ipsum! In quae galisum rem accusantium maiores eum dolore dolor ut recusandae fuga 33 illo autem vel blanditiis expedita et voluptates iusto. Non iste voluptatem aut necessitatibus autem ad omnis voluptatem et fuga dolorum. ",
+  descriptionProfil: "Non galisum pariatur et atque facere nam magnam sint non nihil expedita est autem omnis! Est possimus internos qui repudiandae distinctio eos dignissimos sequi et Quis exercitationem est impedit repellendus quo eaque quasi. Non dolore quidem eos delectus officiis ut explicabo provident a nisi quia. "
 }
 interface Input {
   name: string;
@@ -26,6 +26,19 @@ interface Input {
   text?: string;
   control?: AbstractControl;
 }
+const InputConf=[
+  { name: "title", type: "text" },
+  { name: "salary", type: "text" },
+  { name: "devise", type: "text" },
+  { name: "field", type: "select", options: [] },
+  { name: "level", type: "select",options: [] },
+  { name: "type", type: "radio", text:"Type de contrat :", options: [] },
+  { name: "company", type: "text" },
+  { name: "adresse", type: "text" },
+  { name: "town", type: "select",options: [] },
+  { name: "descriptionJob", type: "textarea",text:"description of job"},
+  { name: "descriptionProfil", type: "textarea",text:"description of profil for job" }
+];
 @Component({
   selector: 'app-job-form',
   templateUrl: './job-form.component.html',
@@ -34,19 +47,7 @@ interface Input {
 export class JobFormComponent implements OnInit {
 
   jobForm: FormGroup;
-  inputs: Input[] = [
-    { name: "title", type: "text" },
-    { name: "salary", type: "text" },
-    { name: "devise", type: "text" },
-    { name: "field", type: "select", options: [] },
-    { name: "level", type: "select",options: [] },
-    { name: "type", type: "radio", text:"Type de contrat :", options: [] },
-    { name: "company", type: "text" },
-    { name: "adresse", type: "text" },
-    { name: "town", type: "select",options: [] },
-    { name: "descriptionJob", type: "textarea",text:"description of job"},
-    { name: "descriptionProfil", type: "textarea",text:"description of profil for job" }
-  ];
+  inputs: Input[] = InputConf;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -65,29 +66,17 @@ export class JobFormComponent implements OnInit {
     }
   }
 
-  ngOnDestroy() {}
-
   onSubmitForm() {
-    let job:Job=this.formToJob(this.jobForm);
+    let job:Job=this.jobForm.value
+    job.pubDate=new Date();
     this.jobService.persist(job);
     this.jobService.flush();
     this.router.navigate(["/"]);
   }
 
-  /**
-   * retourne un job à partir du formulaire
-   */
-  formToJob(form:FormGroup):Job{
-    let job={};
-    for(let key in form.value){
-      job[key]=form.value[key];
-    }
-    job['pubDate']=new Date();
-    return job as Job;
-  }
 
   /**
-   * initialise manuellement le formaulaire
+   * initialise le formaulaire
    */
   initjobForm(job:Job=defaultJob) {
     this.jobForm = this.formBuilder.group(
@@ -142,10 +131,7 @@ export class JobFormComponent implements OnInit {
     return this.jobForm.get("contacts") as FormGroup;
   }
 
-  /**
-   other possibilities : this.jobForm.get(['contacts','emails'])
-   ou this.jobForm.get('contacts.emails') as FormArray;
-   **/
+
   get emails(): FormArray {
     return this.contacts.get("emails") as FormArray;
   }
@@ -167,19 +153,13 @@ export class JobFormComponent implements OnInit {
   /**
    * ajout dynamique de numéro de téléphone
    */
-  onAddPhone() {
-    let newPhone = this.formBuilder.control(null, Validators.required);
+  onAddPhone(phone=null) {
+    let newPhone = this.formBuilder.control(phone, [Validators.required]);
     this.phones.push(newPhone);
   }
 
-  /**
-   * ajout dynamique d'email
-   * pour des raisons d'accèssibilité il faut toujours rajouter
-   * le required dans l'input du formulaire malgré que c'est
-   * pas nécéssaire pour la validation https://angular.io/guide/form-validation
-   */
-  onAddEmail() {
-    let newEmail = this.formBuilder.control(null, {
+  onAddEmail(email=null) {
+    let newEmail = this.formBuilder.control(email, {
       validators: [Validators.required, Validators.email]
     });
     this.emails.push(newEmail);
