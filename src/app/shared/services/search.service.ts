@@ -14,6 +14,9 @@ export class SearchService {
   filter(jobs:Job[]){
     return  jobs.filter((job)=>{
       let jobstring = job.company +job.field+job.type+job.adresse+job.descriptionJob+job.descriptionProfil+job.salary+job.title+job.town+job.skills.join(' ');
+      if(job.contacts && job.contacts.emails){
+        jobstring+=job.contacts.emails.join(' ');
+      }
       return jobstring.toLocaleLowerCase().includes(this.searchs$.value.toLocaleLowerCase())
     });
   }

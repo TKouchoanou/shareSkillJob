@@ -1,1 +1,74 @@
-<p>job-detail works!</p>
+
+<div class="container" *ngIf="job" >
+  <br>
+  <br>
+  <div class="card">
+    <div class="card-body">
+      <div class="row">
+        <div class="col-sm-6">
+      <h5 class="card-title">{{job.title}}</h5>
+      <h6 class="card-subtitle mb-2 text-muted">{{job.company }}  {{job.pubDate | date}}</h6>
+          <h6 class="card-subtitle mb-2 text-muted">{{job.type.split(':').shift()+ ' '+job.town }}</h6>
+          </div>
+        <div class="col-sm-6 d-flex justify-content-end  ">
+          <h6 class="card-subtitle mb-2 text-muted">{{job.salary | currency:'EUR' }}</h6>
+          <br>
+        </div>
+      </div>
+    <img class="card-img-bottom"  [src]="src" alt="Card image cap">
+    </div>
+    <hr>
+    <div class="card-body">
+      <h5 class="card-title">Job description</h5>
+      <p class="card-text">{{job.descriptionJob}}</p>
+      <hr>
+      <h5 class="card-title">Searched Profile</h5>
+      <p class="card-text">{{job.descriptionProfil}}</p>
+    </div>
+
+  </div>
+
+        <div class="card">
+          <div class="card-body">
+            <div class="row">
+              <div class="col-sm-6">
+                <h5 class="card-title">Compétences</h5>
+
+            <ul *ngFor="let skill of job.skills" class="list-group list-group-flush">
+              <li class="list-group-item">{{skill.skill+' : '+skill.level}}</li>
+            </ul>
+              </div>
+
+              <div class="col-sm-6" >
+                <ng-template [ngIf]="job.contacts">
+                <h5 class="card-title">Conctacts</h5>
+                <h6 *ngIf="job.contacts.emails" class="card-title">Emails</h6>
+                <ul class="">
+                  <li *ngFor="let email of job.contacts.emails">{{email}}</li>
+                </ul>
+                <h6 *ngIf="job.contacts.phones" class="card-title">Phones</h6>
+                <ul  class="">
+                  <li *ngFor="let phone of job.contacts.phones">{{phone}}</li>
+                </ul>
+                </ng-template>
+                <h6 *ngIf="job.adresse" class="card-title">Adresses</h6>
+                <p class="card-text">{{job.adresse}} </p>
+              </div>
+        </div>
+      </div>
+          <div class="row">
+            <div class="col-sm-6">
+                <button [routerLink]="['/job',job.id,'edit']" class="btn btn-primary">Update this job </button>
+            </div>
+              <div class="col-sm-6">
+                 <button (click)="delete()" class="btn btn-primary">delete this job </button>
+              </div>
+        </div>
+
+</div>
+
+
+
+
+
+

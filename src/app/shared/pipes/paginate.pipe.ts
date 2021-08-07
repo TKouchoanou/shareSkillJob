@@ -5,8 +5,8 @@ import { Pipe, PipeTransform } from '@angular/core';
 })
 export class PaginatePipe implements PipeTransform {
 
-  transform(value: unknown, ...args: unknown[]): unknown {
-    return null;
+  transform(array:any[],start:number,end:number): Array<any> {
+    return array.slice(start,end);
   }
 
 }

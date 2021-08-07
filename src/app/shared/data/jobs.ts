@@ -1,6 +1,6 @@
-import {Job} from "../interfaces/job.interface";
 
-export const jobs= [
+
+export const jobs:any[]= [
   {
     id: 1,
     title: "Data-science eenginer Nice",
@@ -17,7 +17,7 @@ export const jobs= [
     company: "Alteca",
     adresse: "Nice",
     town: "Nice",
-    contacts: { emails: [], phones: [] },
+    contacts: { emails: [], phones: ["05-54-64-78"] },
     descriptionJob: "nice job for you",
     descriptionProfil: "motivate persons"
   },
@@ -30,8 +30,7 @@ export const jobs= [
       "Agronomy Basic",
       "Mathématiques Secondary",
       "Statistics Master",
-      "Econometric ",
-      ""
+      "Econometric "
     ],
     level: "expert",
     type: "CDI : Contract of indefinite duration",
@@ -39,7 +38,7 @@ export const jobs= [
     company: "INRA",
     adresse: "Montpellier",
     town: "Montpellier",
-    contacts: { emails: [], phones: [] },
+    contacts: { emails: ["redutf@rs.tk"], phones: [] },
     descriptionJob: "nice job for you",
     descriptionProfil: "motivate persons"
   },
@@ -55,7 +54,7 @@ export const jobs= [
     company: "General Society Bank",
     adresse: "Paris",
     town: "Paris",
-    contacts: { emails: [], phones: [] },
+    contacts: { emails: ["tsre@ht.vr"], phones: [] },
     descriptionJob: "nice job for you",
     descriptionProfil: "motivate persons"
   },
@@ -77,7 +76,7 @@ export const jobs= [
     company: "Cap-gemini",
     adresse: "Lyon",
     town: "Lyon",
-    contacts: { emails: [], phones: [] },
+    contacts: { emails: ["uytrfop@ht.ft"], phones: ["54-67-90"] },
     descriptionJob: "nice job for you",
     descriptionProfil: "motivate persons"
   },
@@ -97,7 +96,7 @@ export const jobs= [
     company: "Alteca",
     adresse: "Nice",
     town: "Nice",
-    contacts: { emails: [], phones: [] },
+    contacts: { emails: ["zoomfrt.@reg.lk"], phones: [] },
     descriptionJob: "nice job for you",
     descriptionProfil: "motivate persons"
   },
@@ -111,7 +110,7 @@ export const jobs= [
       "Mathématiques Secondary",
       "Statistics Master",
       "Econometric ",
-      ""
+      "English"
     ],
     level: "expert",
     field: "Economics",
@@ -119,7 +118,7 @@ export const jobs= [
     company: "INRA",
     adresse: "Montpellier",
     town: "Montpellier",
-    contacts: { emails: [], phones: [] },
+    contacts: { emails: ["zok@hot.mail"], phones: [] },
     descriptionJob: "nice job for you",
     descriptionProfil: "motivate persons"
   },
@@ -135,7 +134,7 @@ export const jobs= [
     company: "General Society Bank",
     adresse: "Paris",
     town: "Paris",
-    contacts: { emails: [], phones: [] },
+    contacts: { emails: ["zfrese@gmail.com"], phones: [] },
     descriptionJob: "nice job for you",
     descriptionProfil: "motivate persons"
   },
@@ -157,7 +156,7 @@ export const jobs= [
     company: "Cape-gemini",
     adresse: "Lyon",
     town: "Lyon",
-    contacts: { emails: [], phones: [] },
+    contacts: { emails: ["titi@yahoo.fr"], phones: ["09-56-32-44"] },
     descriptionJob: "nice job for you",
     descriptionProfil: "motivate persons"
   },
@@ -170,8 +169,7 @@ export const jobs= [
       "Agronomy Basic",
       "Mathématiques Secondary",
       "Statistics Master",
-      "Econometric ",
-      ""
+      "Econometric "
     ],
     level: "expert",
     field: "Developper",
@@ -179,7 +177,7 @@ export const jobs= [
     company: "Cape-gemini",
     adresse: "Nice",
     town: "Nice",
-    contacts: { emails: [], phones: [] },
+    contacts: { emails: ["zozor@gmail.com"], phones: [] },
     descriptionJob: "nice job for you",
     descriptionProfil: "motivate persons"
   },
@@ -195,9 +193,23 @@ export const jobs= [
     company: "General Society Bank",
     adresse: "Paris",
     town: "Paris",
-    contacts: { emails: [], phones: [] },
+    contacts: { emails: ["retdas@gmail.com"], phones: [] },
     descriptionJob: "nice job for you",
     descriptionProfil: "motivate persons"
   }
-];
+].map( (job)=> {
+  // @ts-ignore
+  job.skills = job.skills.map((skill) => {
+    if (typeof skill === "string") {
+      return {skill: skill, level: Math.random() * 100 * 6 + 2 > 300 ? 'stater' : 'confirmed'}
+    }
+    return skill;
+  });
+ let  date=new Date();
+  let diff= date.getTime()-5*9000+Math.random()*12000;
+  date=new Date(diff);
+  job['pubDate']=date;
+  return job;
 
+} );
+//pour chaque job on adapte le skill

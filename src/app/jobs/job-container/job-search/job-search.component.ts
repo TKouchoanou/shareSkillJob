@@ -6,7 +6,7 @@ import {SearchService} from "../../../shared/services/search.service"
   styleUrls: ['./job-search.component.scss']
 })
 export class JobSearchComponent  {
-  q:string ="teacher";
+  q:string ="";
   constructor(private searchService :SearchService ) {
   }
   ngDoCheck(){

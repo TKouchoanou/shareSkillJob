@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import {AbstractControl, FormArray, FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {JobsService} from "../../shared/services/jobs.service";
-import {ActivatedRoute, Router} from "@angular/router"
+import {ActivatedRoute, ParamMap, Router} from "@angular/router"
 import {Job} from "../../shared/interfaces/job.interface";
 import {filters} from "../../shared/filter/job/abstract.job.filter";
 const defaultJob:Job={
@@ -24,15 +24,16 @@ interface Input {
   type: string;
   options?: any[];
   text?: string;
+  select?:string;
   control?: AbstractControl;
 }
 const InputConf=[
   { name: "title", type: "text" },
   { name: "salary", type: "text" },
   { name: "devise", type: "text" },
-  { name: "field", type: "select", options: [] },
-  { name: "level", type: "select",options: [] },
-  { name: "type", type: "radio", text:"Type de contrat :", options: [] },
+  { name: "field", type: "select", options: [] ,select:"#"},
+  { name: "level", type: "select",options: [],select:"#" },
+  { name: "type", type: "radio", text:"Type de contrat :", options: [] ,select:"#"},
   { name: "company", type: "text" },
   { name: "adresse", type: "text" },
   { name: "town", type: "select",options: [] },
@@ -48,6 +49,7 @@ export class JobFormComponent implements OnInit {
 
   jobForm: FormGroup;
   inputs: Input[] = InputConf;
+  job!:Job;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -57,7 +59,26 @@ export class JobFormComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.initjobForm();
+    console.log('well comme');
+   this.route.paramMap.subscribe((paramMap: ParamMap) => {
+     let index = +paramMap.get('index');
+     if (index) {
+       this.jobService.getJob(index).subscribe((job)=> {
+         this.job = job
+         this.initjobForm(this.job);
+         this.initInput();
+       });
+
+     }else{
+       this.initjobForm();
+       this.initInput();
+     }
+
+
+   })
+  }
+
+  initInput(){
     for (let input of this.inputs) {
       input.control = this.jobForm.get(input.name);
       if(input.options){
@@ -68,10 +89,13 @@ export class JobFormComponent implements OnInit {
 
   onSubmitForm() {
     let job:Job=this.jobForm.value
+    if(this.job){
+      job.id=this.job.id;
+    }
     job.pubDate=new Date();
-    this.jobService.persist(job);
+    let id=this.jobService.persist(job);
     this.jobService.flush();
-    this.router.navigate(["/"]);
+    this.router.navigate(["job",id]);
   }
 
 
@@ -79,6 +103,8 @@ export class JobFormComponent implements OnInit {
    * initialise le formaulaire
    */
   initjobForm(job:Job=defaultJob) {
+    let emails=job.contacts.emails?this.formBuilder.array(job.contacts.emails.map((email)=>this.emailToFromControl(email))):[]
+    let phones=job.contacts.phones?this.formBuilder.array(job.contacts.phones.map((phone)=>this.phoneToFromControl(phone))):[]
     this.jobForm = this.formBuilder.group(
       {
         title: [job.title, Validators.required],
@@ -87,17 +113,17 @@ export class JobFormComponent implements OnInit {
           [Validators.required, Validators.pattern(new RegExp("^\\d+$"))]
         ],
         devise: job.devise,
-        skills: this.formBuilder.array([]),
+        skills: this.formBuilder.array(job.skills.map((skill)=>this.skillsToFormGroup(skill))),
         field: job.field,
         level: job.level,
-        type: ["", Validators.required],
+        type: [job.type, Validators.required],
         company: job.company,
         adresse: job.adresse,
         town: job.town,
         contacts: this.formBuilder.group(
           {
-            emails: this.formBuilder.array([]),
-            phones: this.formBuilder.array([])
+            emails: emails,
+            phones: phones
           },
           { validators: [Validators.required, this.contactValidator] }
         ),
@@ -109,15 +135,23 @@ export class JobFormComponent implements OnInit {
   }
 
   skillsToFormGroup(skill:{skill:string,level:string}={skill:"",level:""}){
-    return this.formBuilder.group({competence:[skill.skill,[Validators.required]],niveau:[skill.level,[Validators.required]]})
+    return this.formBuilder.group({skill:[skill.skill,[Validators.required]],level:[skill.level,[Validators.required]]})
+  }
+  emailToFromControl(email="zozo@gmail.com"){
+    return this.formBuilder.control(email, {
+      validators: [Validators.required, Validators.email]
+    });
   }
 
+  phoneToFromControl(phone=null){
+    return  this.formBuilder.control(phone, [Validators.required]);
+  }
   /**
    * valide les contacts
    * un contact est invalide s'il n'y a ni num de phone ni email
    * il faut aumoin un numéro ou un emails
    */
-  contactValidator(g: FormGroup) { console.log(g.parent)
+  contactValidator(g: FormGroup) {
     return g.get("emails").value.length === 0 &&
     g.get("phones").value.length === 0
       ? { contact: true, message: "Malo need a least one contact" }
@@ -154,22 +188,17 @@ export class JobFormComponent implements OnInit {
    * ajout dynamique de numéro de téléphone
    */
   onAddPhone(phone=null) {
-    let newPhone = this.formBuilder.control(phone, [Validators.required]);
-    this.phones.push(newPhone);
+    this.phones.push(this.phoneToFromControl(phone));
   }
 
   onAddEmail(email=null) {
-    let newEmail = this.formBuilder.control(email, {
-      validators: [Validators.required, Validators.email]
-    });
-    this.emails.push(newEmail);
+    this.emails.push(this.emailToFromControl(email));
   }
   /**
    * ajout dynamique d'une compétence
    */
   onAddSkill() {
-    let newSkill = this.skillsToFormGroup();
-    this.skills.push(newSkill);
+    this.skills.push(this.skillsToFormGroup());
   }
 
   /**

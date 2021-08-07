@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
 import {Job} from "../interfaces/job.interface";
-import {BehaviorSubject, Subscription} from "rxjs";
+import {BehaviorSubject, Observable, Subscription} from "rxjs";
 import {HttpClient} from "@angular/common/http";
 import {FilterService} from "./filter.service";
 import {SearchService} from "./search.service";
-import {first, map} from "rxjs/operators";
+import {filter, first, map} from "rxjs/operators";
 @Injectable({
   providedIn: 'root'
 })
@@ -23,18 +23,22 @@ export class JobsService {
    * Fait un appel reseau pour récupérer les données
    */
   constructor(private httpClient: HttpClient,private filterService :FilterService,private searchService:SearchService ) {
-    this.subscribes()
+    this.subscribes();
     this.fetchAll();
   }
 
 
+
    emit(){
-     let jobs=this.filterService.applyFilters(this.untouchedJobs$.value);
-     jobs = this.searchService.filter(jobs);
-     this.jobs$.next(jobs);
+     let newJobs=this.filterService.applyFilters(this.untouchedJobs$.value);
+     newJobs = this.searchService.filter(newJobs);
+     this.jobs$.next(newJobs);
    }
 
 
+  /**
+   * souscriptions pour rafraichir à chaque évènement nécéssitant de rafraichir : filtre,recherche..
+   */
   subscribes(){
     this.subscription.add(
     this.filterService.filters$.subscribe(
@@ -43,18 +47,47 @@ export class JobsService {
       }
     ));
     this.subscription.add(this.searchService.searchs$.subscribe(()=>this.emit()))
-
-    this.subscription.add(this.untouchedJobs$.subscribe((joblist)=>{
+    /**
+     * à chaque fous d'un untouchedJob est émis on passe par la fonction emit pour emettre job rafraichit
+     */
+    this.subscription.add(this.untouchedJobs$.subscribe(()=>{
       this.emit();
     }));
   }
 
+  remove(index:any){
+    let values =this.untouchedJobs$.value;
+    let i= values.findIndex((job)=>job.id==index);
+    values.splice(i,1);
+    this.untouchedJobs$.next(values);
+  }
+
+ getJob(index:any):Observable<Job>{
+    if(typeof index !=null){
+      return this.jobs$.pipe(filter((joblList: Job[]) =>  joblList!=[] ), map((joblist)=>joblist.find((job)=>job.id===index)))
+      ;
+    }
+   return  this.jobs$.pipe(first((joblList: Job[]) => joblList!=[]),map((jobList)=>jobList[0]));
+ }
   /**
    * ajoute job à jobsnofilter en vue d'une
    * future sauvegarde
    */
   persist(job: Job) {
-    this.untouchedJobs$.next([...this.untouchedJobs$.value,job]);
+    let jobid=job.id;
+    if(!job.id){
+      //le plus grand id +1 pour être sure d'avoir un id unique non utilisé sans me soucier s'il y a un lien entre job.id et son index dans le tableau
+      job.id=jobid=this.untouchedJobs$.value.map((eachjob)=>eachjob.id).sort((id1,id2)=>id1-id2).pop()+1;
+      this.untouchedJobs$.next([...this.untouchedJobs$.value,job]);
+    }else {
+      let values =this.untouchedJobs$.value;
+      let index= values.findIndex((old)=>job.id==old.id);
+     if(confirm("Voulez -vous vraiment ce job modifier ?")){
+       values[index]=job;
+       this.untouchedJobs$.next(values);
+     }
+    }
+    return jobid;
   }
 
   /**
@@ -68,7 +101,7 @@ export class JobsService {
         "https://fir-maloprojet-default-rtdb.europe-west1.firebasedatabase.app/" +
         this.db_name +
         ".json",
-        this.jobs$.value
+        this.untouchedJobs$.value
       )
       .subscribe(
         joblist => {
@@ -76,6 +109,7 @@ export class JobsService {
         },
         error => {
           console.log(error);
+          alert('please reload the page');
         }
       );
   }
@@ -90,25 +124,24 @@ export class JobsService {
         this.db_name +
         ".json"
       ).pipe( map((joblist)=>{
-
          return joblist.map((job)=>{
-           //pour chaque job on adapte le skill
-           job.skills=job.skills.map((skill)=>{
-             if(typeof skill==="string"){
-               return {skill:skill,level:Math.random()*100*6+2>300?'stater':'confirmed'}
-             }
-             return  skill;
-           })
 
+           if(!job.contacts.emails){
+             job.contacts.emails=[];
+           }
+           if(!job.contacts.phones){
+             job.contacts.phones=[];
+           }
            return job;
          })
     }), first())
       .subscribe(
         joblist => {
-          this.untouchedJobs$.next(joblist.map(job => ({...job,pubDate:new Date(job.pubDate)}))) ;
+          this.untouchedJobs$.next(joblist.map((job,i) => ({...job,id:i+1,pubDate:new Date(job.pubDate)}))) ;
         },
         error => {
           console.log(error);
+          alert('please reload the page')
         }
       );
   }
@@ -118,9 +151,7 @@ export class JobsService {
    */
   sliceJobs(start: number, end: number) {
     this.jobs$.next(
-      this.jobs$.value
-        .map((job,i)=>({id:i+1,...job}))
-        .slice(start, end)
+      this.jobs$.value.slice(start, end)
     );
   }
 }

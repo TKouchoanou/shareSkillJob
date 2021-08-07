@@ -19,5 +19,4 @@ export class JobContainerComponent implements OnInit {
   onSort(criteria:string){
     this.JobService.sortCriteria$.next(criteria);
   }
-
 }

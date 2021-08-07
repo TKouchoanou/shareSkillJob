@@ -1,9 +1,9 @@
 import { Pipe, PipeTransform } from '@angular/core';
 
 @Pipe({
-  name: 'toStr'
+  name: 'toStrSkill'
 })
-export class TostrPipe implements PipeTransform {
+export class TostrSkillPipe implements PipeTransform {
 
   transform(skills: Array<{skill:string,level:string}|string>): string {
   return  skills.map((skill)=>{

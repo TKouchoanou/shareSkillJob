@@ -1,4 +1,4 @@
-<div class="col-sm-8 col-sm-offset-2 ">
+<div class="col-sm-8 col-sm-offset-2 " *ngIf="jobForm">
 
   <form [formGroup]="jobForm" (ngSubmit)="onSubmitForm()">
 
@@ -18,14 +18,14 @@
         <div *ngSwitchCase="'select'">
           <label  [for]="input.name">{{input.name |titlecase}}</label> <br/>
           <select class="form-control"  [id]="input.name" [formControlName]="input.name">
-            <option *ngFor="let opt of input.options" [value]="opt">{{opt|titlecase}}</option>
+            <option *ngFor="let opt of input.options" [value]="opt" [selected]="opt==input.control.value">{{opt|titlecase}}</option>
           </select>
         </div>
 
         <div *ngSwitchCase="'radio'">
           <p>{{input.text}}</p>
           <div *ngFor="let opt of input.options; let i=index;">
-            <input  type="radio" [id]="opt" [formControlName]="input.name" [value]="opt">
+            <input  type="radio" [id]="opt" [formControlName]="input.name" [value]="opt" [checked]="input.control.value==opt">
             <label [for]="opt">{{opt|titlecase}}</label>
           </div>
         </div>
@@ -60,10 +60,10 @@
       <div  [formGroupName]="i"  class="form-group" *ngFor="let skillControl of skills.controls; let i = index">
         <div class="form-row">
           <div class="col">
-            <input type="text" formControlName="competence" class="form-control" placeholder="Compétence ex:Angulat">
+            <input type="text" formControlName="skill" class="form-control" placeholder="Compétence ex:Angulat">
           </div>
           <div class="col">
-            <input type="text" formControlName="niveau" class="form-control" placeholder="Niveau: ex:Confirmé">
+            <input type="text" formControlName="level" class="form-control" placeholder="Niveau: ex:Confirmé">
           </div>
         </div>
       </div>
