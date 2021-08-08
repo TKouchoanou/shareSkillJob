@@ -24,15 +24,16 @@ import {FilterService} from "../shared/services/filter.service";
 import { JobOrderComponent } from './job-container/job-order/job-order.component';
 import {PaginatePipe} from "../shared/pipes/paginate.pipe";
 import {TostrSkillPipe} from "../shared/pipes/tostrSkill.pipe";
-import {FilterByPipe} from "../shared/pipes/filter-by.pipe";
+import {ViewConsoleLogPipe} from "../shared/pipes/view-console-log.pipe";
 import {SortByPipe} from "../shared/pipes/sort-by.pipe";
 import {Route, RouterModule} from "@angular/router";
 
-const JOB_ROUTES:Route[]=[
-  {path:'',component:JobContainerComponent,pathMatch:'full'},
-  {path:'new',component:JobContainerComponent,pathMatch:'full'},
-]
-  //RouterModule.forChild(JOB_ROUTES)
+
+const JOB_ROUTES:Route[]=[{path:'',component:JobContainerComponent},
+            {path:':index/edit', component:JobFormComponent},
+            {path:'new', component:JobFormComponent,pathMatch:'full'},
+            {path:':index', component:JobDetailComponent}];
+
 @NgModule({
   declarations: [
     JobContainerComponent,
@@ -50,13 +51,13 @@ const JOB_ROUTES:Route[]=[
     SizePipe,
     PaginatePipe,
     TostrSkillPipe,
-    FilterByPipe,
+    ViewConsoleLogPipe,
     SortByPipe,
   ],
   imports: [
-    CommonModule, NgbModule, FormsModule, ReactiveFormsModule, RouterModule
+    CommonModule, NgbModule, FormsModule, ReactiveFormsModule, RouterModule.forChild(JOB_ROUTES)
   ],
-  exports :[JobContainerComponent,JobFormComponent],
+  exports :[JobContainerComponent,JobFormComponent,RouterModule],
   providers:[JobsService,FilterService]
 })
 export class JobsModule { }
