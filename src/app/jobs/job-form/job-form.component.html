@@ -34,10 +34,19 @@
           <input  [type]="input.type" [id]="input.name" class="form-control" [formControlName]="input.name">
         </div>
         <!-- debut erreur input -->
-        <div *ngIf="input.control.errors && input.control.touched" class="alert alert-danger"><br>
-          <div *ngIf="input.control.errors.minlength  else checkOther">
-            the required length is {{input.control.errors.minlength.requiredLength}} your current length is
-            {{input.control.errors.minlength.actualLength}}
+        <div *ngIf="input.control.errors  && input.control.touched " class="alert alert-danger"><br>
+          <div *ngIf="input.control.errors.minlength || input.control.errors.maxlength else checkOther">
+
+            <div *ngIf="input.control.errors.minlength ">
+              the minimum required length is {{input.control.errors.minlength.requiredLength}} your current length is
+              {{input.control.errors.minlength.actualLength}}
+            </div>
+
+            <div *ngIf="input.control.errors.maxlength">
+              the maximum required length is {{input.control.errors.maxlength.requiredLength}} your current length is
+              {{input.control.errors.maxlength.actualLength}}
+            </div>
+
           </div>
           <ng-template #checkOther>
             <div *ngIf="input.control.errors.required else generalError">
@@ -113,7 +122,8 @@
       <!-- fin erreurs contacts -->
     </div>
     <br>
-
+    <input type="hidden" class="form-control" formControlName="id" >
+    <input type="hidden" class="form-control" formControlName="pubDate" >
     <button class="btn btn-primary" type="submit" [disabled]="jobForm.invalid">Save</button>
 
   </form>

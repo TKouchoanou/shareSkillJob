@@ -1,9 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit} from '@angular/core';
 import {AbstractControl, FormArray, FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {JobsService} from "../../shared/services/jobs.service";
 import {ActivatedRoute, ParamMap, Router} from "@angular/router"
 import {Job} from "../../shared/interfaces/job.interface";
 import {filters} from "../../shared/filter/job/abstract.job.filter";
+import {first} from "rxjs/operators";
 const defaultJob:Job={
   title: "Angular Developer",
   salary: 3000,
@@ -45,7 +46,7 @@ const InputConf=[
   templateUrl: './job-form.component.html',
   styleUrls: ['./job-form.component.scss']
 })
-export class JobFormComponent implements OnInit {
+export class JobFormComponent implements OnInit{
 
   jobForm: FormGroup;
   inputs: Input[] = InputConf;
@@ -59,22 +60,18 @@ export class JobFormComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    console.log('well comme');
    this.route.paramMap.subscribe((paramMap: ParamMap) => {
      let index = +paramMap.get('index');
      if (index) {
-       this.jobService.getJob(index).subscribe((job)=> {
+       this.jobService.getJob(index).pipe(first()).subscribe((job)=> {
          this.job = job
          this.initjobForm(this.job);
          this.initInput();
        });
-
      }else{
        this.initjobForm();
        this.initInput();
      }
-
-
    })
   }
 
@@ -88,12 +85,7 @@ export class JobFormComponent implements OnInit {
   }
 
   onSubmitForm() {
-    let job:Job=this.jobForm.value
-    if(this.job){
-      job.id=this.job.id;
-    }
-    job.pubDate=new Date();
-    let id=this.jobService.persist(job);
+    let id=this.jobService.persist(this.jobForm.value);
     this.jobService.flush();
     this.router.navigate(["job",id]);
   }
@@ -104,9 +96,11 @@ export class JobFormComponent implements OnInit {
    */
   initjobForm(job:Job=defaultJob) {
     let emails=job.contacts.emails?this.formBuilder.array(job.contacts.emails.map((email)=>this.emailToFromControl(email))):[]
-    let phones=job.contacts.phones?this.formBuilder.array(job.contacts.phones.map((phone)=>this.phoneToFromControl(phone))):[]
+    let phones=job.contacts.phones?this.formBuilder.array(job.contacts.phones.map((phone)=>this.phoneToFromControl(phone))):[];
     this.jobForm = this.formBuilder.group(
       {
+        id:job.id,
+        pubDate:job.pubDate,
         title: [job.title, Validators.required],
         salary: [
           job.salary,
@@ -127,8 +121,8 @@ export class JobFormComponent implements OnInit {
           },
           { validators: [Validators.required, this.contactValidator] }
         ),
-        descriptionJob: [job.descriptionJob, { validators: [Validators.minLength(10),Validators.required] }],
-        descriptionProfil: job.descriptionProfil
+        descriptionJob: [job.descriptionJob, { validators: [Validators.minLength(40),Validators.maxLength(100),Validators.required] }],
+        descriptionProfil: [job.descriptionProfil,[Validators.required]]
       },
       { validators: Validators.required }
     );

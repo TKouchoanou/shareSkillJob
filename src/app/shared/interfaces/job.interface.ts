@@ -13,5 +13,5 @@ export interface Job {
   contacts: any;
   descriptionJob: string;
   descriptionProfil: string;
-  pubDate?: any ;
+  pubDate?: Date ;
 }
