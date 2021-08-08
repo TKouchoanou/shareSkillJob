@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
 import {Job} from "../interfaces/job.interface";
-import {BehaviorSubject, Observable, Subscription} from "rxjs";
+import {BehaviorSubject, Observable, Subscription, throwError} from "rxjs";
 import {HttpClient} from "@angular/common/http";
 import {FilterService} from "./filter.service";
 import {SearchService} from "./search.service";
-import {filter, first, map} from "rxjs/operators";
+import {catchError, filter, first, map, tap} from "rxjs/operators";
 @Injectable({
   providedIn: 'root'
 })
@@ -69,23 +69,22 @@ export class JobsService {
     }
    return  this.jobs$.pipe(first((joblList: Job[]) => joblList!=[]),map((jobList)=>jobList[0]));
  }
-  /**
-   * ajoute job à jobsnofilter en vue d'une
-   * future sauvegarde
-   */
+
   persist(job: Job) {
     let jobid=job.id;
-    if(!job.id){
+    //edit
+    if(job.id){
+      let values =this.untouchedJobs$.value;
+      let index= values.findIndex((old)=>job.id==old.id);
+      values[index]=job;
+      this.untouchedJobs$.next(values);
+    }
+    //new
+    else
+    {
       //le plus grand id +1 pour être sure d'avoir un id unique non utilisé sans me soucier s'il y a un lien entre job.id et son index dans le tableau
       job.id=jobid=this.untouchedJobs$.value.map((eachjob)=>eachjob.id).sort((id1,id2)=>id1-id2).pop()+1;
       this.untouchedJobs$.next([...this.untouchedJobs$.value,job]);
-    }else {
-      let values =this.untouchedJobs$.value;
-      let index= values.findIndex((old)=>job.id==old.id);
-     if(confirm("Voulez -vous vraiment ce job modifier ?")){
-       values[index]=job;
-       this.untouchedJobs$.next(values);
-     }
     }
     return jobid;
   }
@@ -98,20 +97,13 @@ export class JobsService {
   flush() {
     this.httpClient
       .put<Job[]>(
-        "https://fir-maloprojet-default-rtdb.europe-west1.firebasedatabase.app/" +
-        this.db_name +
-        ".json",
+        this.endpointurl,
         this.untouchedJobs$.value
+        ).pipe(
+       map(this.dataMapperFn), tap((jobs)=>this.untouchedJobs$.next(jobs) ),
+       catchError(this.catchHttpErrorFn),first()
       )
-      .subscribe(
-        joblist => {
-          this.untouchedJobs$.next(joblist.map(job => ({...job,pubDate:new Date(job.pubDate)}))) ;
-        },
-        error => {
-          console.log(error);
-          alert('please reload the page');
-        }
-      );
+      .subscribe();
   }
 
   /**
@@ -120,39 +112,37 @@ export class JobsService {
   fetchAll() {
     this.httpClient
       .get<Job[]>(
-        "https://fir-maloprojet-default-rtdb.europe-west1.firebasedatabase.app/" +
-        this.db_name +
-        ".json"
-      ).pipe( map((joblist)=>{
-         return joblist.map((job)=>{
-
-           if(!job.contacts.emails){
-             job.contacts.emails=[];
-           }
-           if(!job.contacts.phones){
-             job.contacts.phones=[];
-           }
-           return job;
-         })
-    }), first())
-      .subscribe(
-        joblist => {
-          this.untouchedJobs$.next(joblist.map((job,i) => ({...job,id:i+1,pubDate:new Date(job.pubDate)}))) ;
-        },
-        error => {
-          console.log(error);
-          alert('please reload the page')
-        }
-      );
+        this.endpointurl
+      ).pipe( map(this.dataMapperFn),tap((jobs)=>this.untouchedJobs$.next(jobs)),catchError(this.catchHttpErrorFn), first())
+      .subscribe();
   }
 
-  /**
-   * permet de paginer
-   */
-  sliceJobs(start: number, end: number) {
-    this.jobs$.next(
-      this.jobs$.value.slice(start, end)
-    );
+  get dataMapperFn(){
+   return  (joblist:Job[])=>{
+      return joblist.map((job)=>{
+
+        if(!job.contacts.emails){
+          job.contacts.emails=[];
+        }
+        if(!job.contacts.phones){
+          job.contacts.phones=[];
+        }
+        return {...job,pubDate:new Date(job.pubDate)};
+      })
+    };
+  }
+
+  get catchHttpErrorFn(){
+   return  err => {
+      console.log(err);
+      alert('some problem with server : please reload the page');
+      return throwError(err);
+    }
+  }
+  get endpointurl(){
+    return  "https://fir-maloprojet-default-rtdb.europe-west1.firebasedatabase.app/" +
+      this.db_name +
+      ".json";
   }
 }
 
