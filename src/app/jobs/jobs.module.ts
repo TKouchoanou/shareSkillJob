@@ -27,12 +27,13 @@ import {TostrSkillPipe} from "../shared/pipes/tostrSkill.pipe";
 import {ViewConsoleLogPipe} from "../shared/pipes/view-console-log.pipe";
 import {SortByPipe} from "../shared/pipes/sort-by.pipe";
 import {Route, RouterModule} from "@angular/router";
+import {JobsResolver} from "../shared/guards/jobs.resolver";
 
 
 const JOB_ROUTES:Route[]=[{path:'',component:JobContainerComponent},
             {path:':index/edit', component:JobFormComponent},
             {path:'new', component:JobFormComponent,pathMatch:'full'},
-            {path:':index', component:JobDetailComponent}];
+            {path:':index', component:JobDetailComponent,resolve: {job: JobsResolver}}];
 
 @NgModule({
   declarations: [
@@ -58,6 +59,6 @@ const JOB_ROUTES:Route[]=[{path:'',component:JobContainerComponent},
     CommonModule, NgbModule, FormsModule, ReactiveFormsModule, RouterModule.forChild(JOB_ROUTES)
   ],
   exports :[JobContainerComponent,JobFormComponent,RouterModule],
-  providers:[JobsService,FilterService]
+  providers:[JobsService,FilterService,JobsResolver]
 })
 export class JobsModule { }

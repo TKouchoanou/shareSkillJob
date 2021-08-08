@@ -1,4 +1,4 @@
-
+import {Job} from "../interfaces/job.interface";
 
 export const jobs:any[]= [
   {

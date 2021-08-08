@@ -15,12 +15,7 @@ export class JobDetailComponent implements OnInit  {
   constructor(private router: Router,private activatedRoute:ActivatedRoute,private jobService:JobsService) {
   }
   ngOnInit(): void {
-    //recuperation de l'index du job dans la route
-    this.activatedRoute.paramMap.subscribe((paramMap: ParamMap) => {
-        //recuperation du job avec l'index
-        this.jobService.getJob(+paramMap.get('index')).subscribe((job:Job)=>{  if(job)this.job=job;});
-      }
-    )
+    this.activatedRoute.data.subscribe((data)=>{this.job=data.job});
   }
 
   delete() {

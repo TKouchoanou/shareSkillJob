@@ -5,21 +5,7 @@ import {ActivatedRoute, ParamMap, Router} from "@angular/router"
 import {Job} from "../../shared/interfaces/job.interface";
 import {filters} from "../../shared/filter/job/abstract.job.filter";
 import {first} from "rxjs/operators";
-const defaultJob:Job={
-  title: "Angular Developer",
-  salary: 3000,
-  devise: "euro",
-  skills: [{skill:"Angular", level:"confirmed"}],
-  field: "",
-  level: "confirmed",
-  type: "CDI : Contract of indefinite duration",
-  company: "Google",
-  adresse: "75 Avenue Charles de Gaulle",
-  town: "Paris",
-  contacts: { emails: [], phones: [] },
-  descriptionJob: "Lorem ipsum dolor sit amet. Sit quibusdam dolor et tempore veniam hic nemo consequatur et explicabo consequatur qui laudantium ipsum! In quae galisum rem accusantium maiores eum dolore dolor ut recusandae fuga 33 illo autem vel blanditiis expedita et voluptates iusto. Non iste voluptatem aut necessitatibus autem ad omnis voluptatem et fuga dolorum. ",
-  descriptionProfil: "Non galisum pariatur et atque facere nam magnam sint non nihil expedita est autem omnis! Est possimus internos qui repudiandae distinctio eos dignissimos sequi et Quis exercitationem est impedit repellendus quo eaque quasi. Non dolore quidem eos delectus officiis ut explicabo provident a nisi quia. "
-}
+
 interface Input {
   name: string;
   type: string;
@@ -69,7 +55,7 @@ export class JobFormComponent implements OnInit{
          this.initInput();
        });
      }else{
-       this.initjobForm();
+       this.initjobForm(this.jobService.defaultJob);
        this.initInput();
      }
    })
@@ -94,7 +80,7 @@ export class JobFormComponent implements OnInit{
   /**
    * initialise le formaulaire
    */
-  initjobForm(job:Job=defaultJob) {
+  initjobForm(job) {
     let emails=job.contacts.emails?this.formBuilder.array(job.contacts.emails.map((email)=>this.emailToFromControl(email))):[]
     let phones=job.contacts.phones?this.formBuilder.array(job.contacts.phones.map((phone)=>this.phoneToFromControl(phone))):[];
     this.jobForm = this.formBuilder.group(
@@ -121,7 +107,7 @@ export class JobFormComponent implements OnInit{
           },
           { validators: [Validators.required, this.contactValidator] }
         ),
-        descriptionJob: [job.descriptionJob, { validators: [Validators.minLength(40),Validators.maxLength(100),Validators.required] }],
+        descriptionJob: [job.descriptionJob, { validators: [Validators.minLength(40),Validators.maxLength(500),Validators.required] }],
         descriptionProfil: [job.descriptionProfil,[Validators.required]]
       },
       { validators: Validators.required }

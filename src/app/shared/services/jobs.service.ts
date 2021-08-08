@@ -5,17 +5,36 @@ import {HttpClient} from "@angular/common/http";
 import {FilterService} from "./filter.service";
 import {SearchService} from "./search.service";
 import {catchError, filter, first, map, tap} from "rxjs/operators";
+const defaultJob:Job={
+  title: "Angular Developer",
+  salary: 3000,
+  devise: "euro",
+  skills: [{skill:"Angular", level:"confirmed"}],
+  field: "",
+  level: "confirmed",
+  type: "CDI : Contract of indefinite duration",
+  company: "Google",
+  adresse: "75 Avenue Charles de Gaulle",
+  town: "Paris",
+  contacts: { emails: [], phones: [] },
+  descriptionJob: "Lorem ipsum dolor sit amet. Sit quibusdam dolor et tempore veniam hic nemo consequatur et explicabo consequatur qui laudantium ipsum! In quae galisum rem accusantium maiores eum dolore dolor ut recusandae fuga 33 illo autem vel blanditiis expedita et voluptates iusto. Non iste voluptatem aut necessitatibus autem ad omnis voluptatem et fuga dolorum. ",
+  descriptionProfil: "Non galisum pariatur et atque facere nam magnam sint non nihil expedita est autem omnis! Est possimus internos qui repudiandae distinctio eos dignissimos sequi et Quis exercitationem est impedit repellendus quo eaque quasi. Non dolore quidem eos delectus officiis ut explicabo provident a nisi quia. "
+}
 @Injectable({
   providedIn: 'root'
 })
 export class JobsService {
 
   db_name = "jobs";
-  /**
-   * emet jobs aux components qui ont souscrire
-   */
+  defaultJob:Job=defaultJob;
   subscription:Subscription= new Subscription();
+  /**
+   * jobs auquels on a appliqué les filtres
+   */
   jobs$ :BehaviorSubject<Job[]> = new BehaviorSubject<Job[]>([]);
+  /**
+   * jobs non filtrés
+   */
   untouchedJobs$:BehaviorSubject<Job[]> = new BehaviorSubject<Job[]>([]);
   sortCriteria$ :BehaviorSubject<string> = new BehaviorSubject<string>(null);
 
@@ -63,11 +82,22 @@ export class JobsService {
   }
 
  getJob(index:any):Observable<Job>{
-    if(typeof index !=null){
-      return this.jobs$.pipe(filter((joblList: Job[]) =>  joblList!=[] ), map((joblist)=>joblist.find((job)=>job.id===index)))
+
+      return this.jobs$.pipe(filter((joblList: Job[]) =>  joblList.length>0 ),
+          map((joblist)=>
+          {
+            if(index==null){
+              throw  new Error("Bad Index provide to get job"+index);
+            }
+            let searchJob=joblist.find((job)=>job.id==index);
+            if(!searchJob){
+              throw new Error("Job with id = "+index+" not found");
+            }
+            return searchJob;
+
+          }))
       ;
-    }
-   return  this.jobs$.pipe(first((joblList: Job[]) => joblList!=[]),map((jobList)=>jobList[0]));
+
  }
 
   persist(job: Job) {
@@ -84,15 +114,14 @@ export class JobsService {
     {
       //le plus grand id +1 pour être sure d'avoir un id unique non utilisé sans me soucier s'il y a un lien entre job.id et son index dans le tableau
       job.id=jobid=this.untouchedJobs$.value.map((eachjob)=>eachjob.id).sort((id1,id2)=>id1-id2).pop()+1;
+      job.pubDate=new Date();
       this.untouchedJobs$.next([...this.untouchedJobs$.value,job]);
     }
     return jobid;
   }
 
   /**
-   * sauvegarde les données actuellement présent dans jobsnofilters
-   * dans la base de donnée doit être appelé après un persist pour
-   * vraiment sauvegarder la nouvelle donnée ajouté
+   * sauvegarde les données actuellement présent dans untouchedJobs
    */
   flush() {
     this.httpClient
@@ -107,7 +136,7 @@ export class JobsService {
   }
 
   /**
-   * recupère les données de la base reinitialise jobsnofilters met à jour jobs et émet
+   * recupère les données de la base
    */
   fetchAll() {
     this.httpClient
@@ -134,11 +163,12 @@ export class JobsService {
 
   get catchHttpErrorFn(){
    return  err => {
-      console.log(err);
+     console.error(err);
       alert('some problem with server : please reload the page');
       return throwError(err);
     }
   }
+
   get endpointurl(){
     return  "https://fir-maloprojet-default-rtdb.europe-west1.firebasedatabase.app/" +
       this.db_name +
