@@ -1,12 +1,10 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import {Job} from "../interfaces/job.interface"
-import {JobsFilters} from "../interfaces/jobFilter.interface";
 @Pipe({
-  name: 'filterBy',
+  name: 'consoleLog',
   //greedy
   pure:false
 })
-export class FilterByPipe implements PipeTransform {
+export class ViewConsoleLogPipe implements PipeTransform {
 
   transform(value)  {
     console.log(value)
