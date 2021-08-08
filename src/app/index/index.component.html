@@ -1,0 +1,14 @@
+
+<div class="center">
+<ngb-carousel *ngIf="images" [showNavigationArrows]="showNavigationArrows" [showNavigationIndicators]="showNavigationIndicators" >
+  <ng-template ngbSlide *ngFor="let item of items; let i=index">
+    <div class="picsum-img-wrapper">
+      <img [src]="item.src" alt="Random slide">
+    </div>
+    <div class="carousel-caption">
+      <h3 [routerLink]="item.link">{{item.title}}</h3>
+    </div>
+  </ng-template>
+</ngb-carousel>
+</div>
+
