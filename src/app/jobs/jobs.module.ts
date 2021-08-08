@@ -28,11 +28,12 @@ import {ViewConsoleLogPipe} from "../shared/pipes/view-console-log.pipe";
 import {SortByPipe} from "../shared/pipes/sort-by.pipe";
 import {Route, RouterModule} from "@angular/router";
 import {JobsResolver} from "../shared/guards/jobs.resolver";
+import {CanDeactiveFormGuard} from "../shared/guards/can-deactive-form.guard";
 
 
 const JOB_ROUTES:Route[]=[{path:'',component:JobContainerComponent},
-            {path:':index/edit', component:JobFormComponent},
-            {path:'new', component:JobFormComponent,pathMatch:'full'},
+            {path:':index/edit', component:JobFormComponent, canDeactivate: [CanDeactiveFormGuard]},
+            {path:'new', component:JobFormComponent,pathMatch:'full',canDeactivate: [CanDeactiveFormGuard]},
             {path:':index', component:JobDetailComponent,resolve: {job: JobsResolver}}];
 
 @NgModule({
@@ -59,6 +60,6 @@ const JOB_ROUTES:Route[]=[{path:'',component:JobContainerComponent},
     CommonModule, NgbModule, FormsModule, ReactiveFormsModule, RouterModule.forChild(JOB_ROUTES)
   ],
   exports :[JobContainerComponent,JobFormComponent,RouterModule],
-  providers:[JobsService,FilterService,JobsResolver]
+  providers:[JobsService,FilterService,JobsResolver,CanDeactiveFormGuard]
 })
 export class JobsModule { }

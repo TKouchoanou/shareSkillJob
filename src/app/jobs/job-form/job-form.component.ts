@@ -37,6 +37,7 @@ export class JobFormComponent implements OnInit{
   jobForm: FormGroup;
   inputs: Input[] = InputConf;
   job!:Job;
+  isSave:boolean=false;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -72,6 +73,7 @@ export class JobFormComponent implements OnInit{
 
   onSubmitForm() {
     let id=this.jobService.persist(this.jobForm.value);
+    this.isSave=true;
     this.jobService.flush();
     this.router.navigate(["job",id]);
   }
@@ -192,6 +194,13 @@ export class JobFormComponent implements OnInit{
       .values.map(ob => {
         return ob.name;
       });
+  }
+  public canLeave(){
+    if(this.isSave){
+      return true;
+    }
+    return confirm("Vous n'avez pas soumis votre formulaire! Ête vous sure de vouloir quitté sans soumettre votre formulaire?");
+
   }
 
 }
