@@ -8,11 +8,9 @@ import {JobsFilters} from "../interfaces/jobFilter.interface";
 })
 export class FilterByPipe implements PipeTransform {
 
-  transform(jobs:Job[],filters:JobsFilters):Job[]  {
-   for(let filter of filters){
-     jobs=filter.filterFn(jobs);
-   }
-   return  jobs;
+  transform(value)  {
+    console.log(value)
+    return value;
   }
 
 }
