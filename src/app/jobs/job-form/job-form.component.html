@@ -108,7 +108,7 @@
       <div formArrayName="phones">
         <h4> Phones</h4>
         <div class="form-group" *ngFor="let phoneControl of phones.controls; let i = index">
-          <input type="tel" class="form-control" [formControlName]="i">
+          <phone-input [showKeyBoard]="false"  [inputNgClass]="{'form-control':true}" [formControlName]="i"></phone-input>
         </div>
         <button type="button" class="btn btn-success" (click)="onAddPhone()"><i class="fa fa-plus"></i></button>
 

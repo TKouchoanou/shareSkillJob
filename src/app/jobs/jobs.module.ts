@@ -29,6 +29,9 @@ import {SortByPipe} from "../shared/pipes/sort-by.pipe";
 import {Route, RouterModule} from "@angular/router";
 import {JobsResolver} from "../shared/guards/jobs.resolver";
 import {CanDeactiveFormGuard} from "../shared/guards/can-deactive-form.guard";
+import {TkFormInputModule} from "tk-form-input";
+import {FlexLayoutModule} from "@angular/flex-layout";
+
 
 
 const JOB_ROUTES:Route[]=[{path:'',component:JobContainerComponent},
@@ -57,7 +60,7 @@ const JOB_ROUTES:Route[]=[{path:'',component:JobContainerComponent},
     SortByPipe,
   ],
   imports: [
-    CommonModule, NgbModule, FormsModule, ReactiveFormsModule, RouterModule.forChild(JOB_ROUTES)
+    CommonModule, NgbModule, FormsModule, ReactiveFormsModule,TkFormInputModule,FlexLayoutModule, RouterModule.forChild(JOB_ROUTES)
   ],
   exports :[JobContainerComponent,JobFormComponent,RouterModule],
   providers:[JobsService,FilterService,JobsResolver,CanDeactiveFormGuard]
