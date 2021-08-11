@@ -3,7 +3,7 @@
   <form [formGroup]="jobForm" (ngSubmit)="onSubmitForm()">
 
     <h3> publish a job offer
-      <button [routerLink]="['..']" type="button" title=" go to resarch page "class="btn btn-default active"><i class="fa fa-search"></i></button>
+      <button [routerLink]="['..']" type="button" title=" go to resarch page " class="btn btn-default active"><i class="fa fa-search"></i></button>
     </h3>
     <br>
     <div *ngFor="let input of inputs" class="form-group">
@@ -108,7 +108,7 @@
       <div formArrayName="phones">
         <h4> Phones</h4>
         <div class="form-group" *ngFor="let phoneControl of phones.controls; let i = index">
-          <phone-input [showKeyBoard]="false"  [inputNgClass]="{'form-control':true}" [formControlName]="i"></phone-input>
+          <phone-input    [placeHolder]="'type your phone number here'"  [inputNgClass]="{'form-control':true}" [formControlName]="i"></phone-input>
         </div>
         <button type="button" class="btn btn-success" (click)="onAddPhone()"><i class="fa fa-plus"></i></button>
 
