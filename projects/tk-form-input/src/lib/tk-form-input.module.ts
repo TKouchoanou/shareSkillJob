@@ -15,7 +15,7 @@ import {FlexLayoutModule} from "@angular/flex-layout";
     CommonModule,FormsModule,FlexLayoutModule
   ],
   exports: [
-    TkFormInputComponent,PhoneInputComponent
+    PhoneInputComponent
   ]
 })
 export class TkFormInputModule { }

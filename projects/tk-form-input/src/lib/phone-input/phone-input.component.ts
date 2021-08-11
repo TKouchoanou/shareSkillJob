@@ -1,4 +1,4 @@
-import {Component, forwardRef,Input} from '@angular/core';
+import {Component, forwardRef, Input, OnInit} from '@angular/core';
 import {ControlValueAccessor, NG_VALUE_ACCESSOR} from "@angular/forms";
 
 @Component({
@@ -7,24 +7,33 @@ import {ControlValueAccessor, NG_VALUE_ACCESSOR} from "@angular/forms";
   styleUrls: ['./phone-input.component.scss'],
   providers: [{provide: NG_VALUE_ACCESSOR,multi:true,useExisting: forwardRef(()=> PhoneInputComponent)}],
 })
-export class PhoneInputComponent implements ControlValueAccessor {
+export class PhoneInputComponent implements ControlValueAccessor , OnInit{
   digitsButton: string="."
   @Input('showKeyBoard') addDigits: boolean =true;
-  @Input() private digitSeparator=" ";
+  @Input('digitGroupSeparator')  digitSeparator=" ";
   @Input() inputNgClass={};
-   digits: Array<number| string> =new Array(10).fill(0).map((v,i)=>i);
+  @Input() placeHolder="phone number";
+  @Input('groupDigitsBy') nbDigitsByGroup:number=2;
+  @Input() separateAfter;
+  digits: Array<number| string> =new Array(10).fill(0).map((v,i)=>i);
    phoneNumber: string
-   phoneNumberdigits:Array<string|number>=[];
+   phoneNumberDigits:Array<string|number>=[];
   public onChange:Function;
   public onTouched:Function;
-  public disabled:boolean;on
+  public disabled:boolean;
 
+  ngOnInit(): void {
+    if(!this.separateAfter){
+      this.separateAfter=this.nbDigitsByGroup;
+    }
+  }
 
   writeValue(value: string): void {
       if(value){
       let digits=value.split('');
       digits.forEach((v)=>this.pushDigit(v));
-      this.upadetPhoneNumber();
+      this.updatePhoneNumber();
+      this.valueChange();
       }
     }
 
@@ -39,31 +48,45 @@ export class PhoneInputComponent implements ControlValueAccessor {
     }
 
   reset() {
-    this.phoneNumberdigits=[];
+    this.phoneNumberDigits=[];
     this.phoneNumber='';
   }
 
   pop(){
-    this.phoneNumberdigits.pop();
-   this.upadetPhoneNumber();
+    this.phoneNumberDigits.pop();
+    this.updatePhoneNumber();
   }
 
   update(i: number|string) {
     this.pushDigit(i);
-    this.upadetPhoneNumber();
-    this.onChange(this.phoneNumber);
+    this.updatePhoneNumber();
+    this.valueChange();
   }
 
+  /**
+   * @param i
+   */
   pushDigit(i:number|string){
-    if(this.phoneNumberdigits.length===2 || this.phoneNumberdigits[this.phoneNumberdigits.length-3]===this.digitSeparator){
-      this.phoneNumberdigits.push(this.digitSeparator);
+    if(this.phoneNumberDigits.length===this.separateAfter||
+      this.phoneNumberDigits[this.phoneNumberDigits.length-1-this.nbDigitsByGroup]===this.digitSeparator){
+      this.phoneNumberDigits.push(this.digitSeparator);
     }
-    this.phoneNumberdigits.push(i);
+    this.phoneNumberDigits.push(i);
   }
 
-  upadetPhoneNumber(){
-    this.phoneNumber=this.phoneNumberdigits.join('')
+  updatePhoneNumber(){
+    this.phoneNumber=this.phoneNumberDigits.join('')
   }
+
+  /**
+   * appel le OnChange de ControlValueAccessor
+   */
+  valueChange(){
+    if(this.onChange){
+      this.onChange(this.phoneNumber);
+    }
+  }
+
  public hideDigits(){
     this.addDigits=false;
     this.digitsButton="*"

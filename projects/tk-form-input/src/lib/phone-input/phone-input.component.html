@@ -1,6 +1,6 @@
 <div [class.disabled]="disabled" fxLayout="column" fxLayoutGap="15px" >
   <div fxLayout="row" fxLayoutGap="15px">
-    <input  [ngClass]="inputNgClass" [(ngModel)]="phoneNumber" disabled type="text" placeholder="phone number" />
+    <input  [ngClass]="inputNgClass" [(ngModel)]="phoneNumber" disabled type="text" [placeholder]="placeHolder" />
     <button [title]="addDigits?'disabled keyboard':'enable keyboard'" type="button" (click)="toggle()">{{digitsButton}}</button>
   </div>
   <div *ngIf="addDigits" fxLayout="row wrap" fxLayoutGap="15px" fxLayoutAlign="start center" >

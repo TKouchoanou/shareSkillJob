@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 
 @Component({
   selector: 'lib-tk-form-input',
@@ -10,11 +10,5 @@ import { Component, OnInit } from '@angular/core';
   styles: [
   ]
 })
-export class TkFormInputComponent implements OnInit {
-
-  constructor() { }
-
-  ngOnInit(): void {
-  }
-
+export class TkFormInputComponent  {
 }
