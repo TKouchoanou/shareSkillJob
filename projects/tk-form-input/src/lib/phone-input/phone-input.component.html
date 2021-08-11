@@ -1,0 +1,18 @@
+<div [class.disabled]="disabled" fxLayout="column" fxLayoutGap="15px" >
+  <div fxLayout="row" fxLayoutGap="15px">
+    <input  [ngClass]="inputNgClass" [(ngModel)]="phoneNumber" disabled type="text" placeholder="phone number" />
+    <button [title]="addDigits?'disabled keyboard':'enable keyboard'" type="button" (click)="toggle()">{{digitsButton}}</button>
+  </div>
+  <div *ngIf="addDigits" fxLayout="row wrap" fxLayoutGap="15px" fxLayoutAlign="start center" >
+    <div [title]="'write'+digit" (click)="update(digit)" fxLayout="row" fxLayoutAlign="center center" class="block" *ngFor="let digit of digits">
+      <span>{{ digit }}</span>
+    </div>
+    <div title="clear last" (click)="pop()" fxLayout="row" fxLayoutAlign="center center" class="block">
+      <span ><</span>
+    </div>
+
+    <div title="reset" (click)="reset()" fxLayout="row" fxLayoutAlign="center center" class="block">
+      <span >x</span>
+    </div>
+  </div>
+</div>

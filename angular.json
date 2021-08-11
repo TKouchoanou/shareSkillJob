@@ -109,6 +109,37 @@
           }
         }
       }
+    },
+    "tk-form-input": {
+      "projectType": "library",
+      "root": "projects/tk-form-input",
+      "sourceRoot": "projects/tk-form-input/src",
+      "prefix": "lib",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:ng-packagr",
+          "options": {
+            "project": "projects/tk-form-input/ng-package.json"
+          },
+          "configurations": {
+            "production": {
+              "tsConfig": "projects/tk-form-input/tsconfig.lib.prod.json"
+            },
+            "development": {
+              "tsConfig": "projects/tk-form-input/tsconfig.lib.json"
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "main": "projects/tk-form-input/src/test.ts",
+            "tsConfig": "projects/tk-form-input/tsconfig.spec.json",
+            "karmaConfig": "projects/tk-form-input/karma.conf.js"
+          }
+        }
+      }
     }
   },
   "defaultProject": "shareSkillJob"

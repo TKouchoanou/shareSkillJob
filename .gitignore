@@ -46,3 +46,6 @@ Thumbs.db
 # personnal
 src/app/color-directive.ts
 src/app/new-if.directive.ts
+# libraries
+projects/tk-form-input/node_modules
+
