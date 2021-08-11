@@ -19,8 +19,6 @@ import { JobFormComponent } from './job-form/job-form.component';
 import { JobFilterComponent } from './job-container/job-filter/job-filter.component';
 import { JobSearchComponent } from './job-container/job-search/job-search.component';
 import { JobPaginatorComponent } from './job-container/job-paginator/job-paginator.component';
-import {JobsService} from "../shared/services/jobs.service";
-import {FilterService} from "../shared/services/filter.service";
 import { JobOrderComponent } from './job-container/job-order/job-order.component';
 import {PaginatePipe} from "../shared/pipes/paginate.pipe";
 import {TostrSkillPipe} from "../shared/pipes/tostrSkill.pipe";
@@ -31,6 +29,7 @@ import {JobsResolver} from "../shared/guards/jobs.resolver";
 import {CanDeactiveFormGuard} from "../shared/guards/can-deactive-form.guard";
 import {TkFormInputModule} from "tk-form-input";
 import {FlexLayoutModule} from "@angular/flex-layout";
+
 
 
 
@@ -63,6 +62,6 @@ const JOB_ROUTES:Route[]=[{path:'',component:JobContainerComponent},
     CommonModule, NgbModule, FormsModule, ReactiveFormsModule,TkFormInputModule,FlexLayoutModule, RouterModule.forChild(JOB_ROUTES)
   ],
   exports :[JobContainerComponent,JobFormComponent,RouterModule],
-  providers:[JobsService,FilterService,JobsResolver,CanDeactiveFormGuard]
+  providers:[]
 })
 export class JobsModule { }

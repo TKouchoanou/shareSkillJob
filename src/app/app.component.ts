@@ -1,5 +1,4 @@
 import { Component } from '@angular/core';
-import {JobsService} from "./shared/services/jobs.service";
 
 @Component({
   selector: 'app-root',
@@ -8,6 +7,4 @@ import {JobsService} from "./shared/services/jobs.service";
 })
 export class AppComponent {
   title = 'shareSkillJob';
-  constructor(private jobsService:JobsService) {
-  }
 }
