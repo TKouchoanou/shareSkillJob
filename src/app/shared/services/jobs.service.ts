@@ -7,7 +7,7 @@ import {SearchService} from "./search.service";
 import {catchError, filter, first, map, tap} from "rxjs/operators";
 const defaultJob:Job={
   title: "Angular Developer",
-  salary: 3000,
+  salary: 4500,
   devise: "euro",
   skills: [{skill:"Angular", level:"confirmed"}],
   field: "",

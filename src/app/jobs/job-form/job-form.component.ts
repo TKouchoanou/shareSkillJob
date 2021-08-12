@@ -172,9 +172,15 @@ export class JobFormComponent implements OnInit{
   onAddPhone(phone=null) {
     this.phones.push(this.phoneToFromControl(phone));
   }
+  onDeletePhone(i){
+    this.phones.removeAt(i);
+  }
 
   onAddEmail(email=null) {
     this.emails.push(this.emailToFromControl(email));
+  }
+  onDeleteEmail(i){
+  this.emails.removeAt(i);
   }
   /**
    * ajout dynamique d'une compétence
@@ -182,7 +188,9 @@ export class JobFormComponent implements OnInit{
   onAddSkill() {
     this.skills.push(this.skillsToFormGroup());
   }
-
+  onDeleteSkill(i){
+    this.skills.removeAt(i);
+  }
   /**
    * recupère les options des filtres
    */
@@ -195,11 +203,12 @@ export class JobFormComponent implements OnInit{
         return ob.name;
       });
   }
+
   public canLeave(){
     if(this.isSave){
       return true;
     }
-    return confirm("Vous n'avez pas soumis votre formulaire! Ête vous sure de vouloir quitté sans soumettre votre formulaire?");
+    return confirm("Vous n'avez pas soumis votre formulaire! Ête vous sure de vouloir quitter sans soumettre votre formulaire?");
 
   }
 
