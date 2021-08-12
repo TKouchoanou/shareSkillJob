@@ -12,7 +12,7 @@ import {catchError, first} from "rxjs/operators";
 @Injectable({
   providedIn: 'root'
 })
-export class JobsResolver implements Resolve<Job> {
+export class JobResolver implements Resolve<Job> {
   constructor(private service: JobsService,private router: Router) {
   }
   resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<Job> {

@@ -1,22 +1,22 @@
-<tr  *ngIf="job ">
-  <td class="number text-center">{{job.id}}
+<tr class="row" *ngIf="job ">
+  <td  class="number  col-1 text-center">{{job.id}}
   </td>
-  <td class="product">
-    <strong><a href="#">{{job.title}}</a></strong>
+  <td class="col-9">
+    <strong><a [routerLink]="['/job',job.id]">{{job.title}}</a></strong>
     <small> Proposed by : </small> {{job.company}}<br>
-    <span *ngIf="job.field">
-                    Field: {{job.field}}
+              <span>
+                    Field: {{job.field?job.field:'not specified'}}
                     </span>
     Type : {{job.type}}
     <i *ngIf="job.level">
       Level : {{job.level}}<br>
     </i>
     <em *ngIf="job.skills && job.skills.length>0">
-      Skills: {{job.skills.join(',')}}
+      Skills: {{job.skills | toStrSkill}}
     </em>
     publicate date : {{job.pubDate|  date:'medium'}}
   </td>
-  <td class="price text-right">
+  <td class="price text-right col-2">
     <small> {{job.company}} {{job.town}} </small> <br>
     {{job.salary}} {{job.devise}}</td>
 </tr>

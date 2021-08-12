@@ -25,7 +25,7 @@ import {TostrSkillPipe} from "../shared/pipes/tostrSkill.pipe";
 import {ViewConsoleLogPipe} from "../shared/pipes/view-console-log.pipe";
 import {SortByPipe} from "../shared/pipes/sort-by.pipe";
 import {Route, RouterModule} from "@angular/router";
-import {JobsResolver} from "../shared/guards/jobs.resolver";
+import {JobResolver} from "../shared/guards/job.resolver";
 import {CanDeactiveFormGuard} from "../shared/guards/can-deactive-form.guard";
 import {TkFormInputModule} from "tk-form-input";
 import {FlexLayoutModule} from "@angular/flex-layout";
@@ -33,10 +33,12 @@ import {FlexLayoutModule} from "@angular/flex-layout";
 
 
 
-const JOB_ROUTES:Route[]=[{path:'',component:JobContainerComponent},
+const JOB_ROUTES:Route[]=[{path:'',component:JobContainerComponent, children:[{path:'cards', component:JobsCardComponent},
+                                                                               {path:'rows',component:JobsRowComponent},
+                                                                               {path:'',redirectTo:'cards',pathMatch:'full'}]},
             {path:':index/edit', component:JobFormComponent, canDeactivate: [CanDeactiveFormGuard]},
             {path:'new', component:JobFormComponent,pathMatch:'full',canDeactivate: [CanDeactiveFormGuard]},
-            {path:':index', component:JobDetailComponent,resolve: {job: JobsResolver}}];
+            {path:':index', component:JobDetailComponent,resolve: {job: JobResolver}}];
 
 @NgModule({
   declarations: [

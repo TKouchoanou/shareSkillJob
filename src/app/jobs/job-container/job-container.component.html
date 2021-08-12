@@ -33,8 +33,8 @@
                 </div>
                 <div class="col-md-6 text-right">
                   <div class="btn-group">
-                    <button   type="button"  class="btn btn-default active"><i class="fa fa-list"> </i></button>
-                    <button  type="button" class="btn btn-default"><i class="fa fa-th"></i></button>
+                    <button  routerLink="/job/rows"  routerLinkActive="active" type="button"  class="btn btn-default active"><i class="fa fa-list"> </i></button>
+                    <button routerLink="/job/cards"  routerLinkActive="active" type="button" class="btn btn-default"><i class="fa fa-th"></i></button>
                   </div>
                 </div>
               </div>
@@ -42,12 +42,13 @@
               <!-- BEGIN TABLE RESULT
             <app-search-results-rows></app-search-results-rows>
             -->
-              <div style="background-color:green "></div>
+
               <!--  <app-search-result-new-row></app-search-result-new-row>
               <router-outlet name="card"> </router-outlet>
               -->
-
+               <div class="row">
               <app-job-list></app-job-list>
+               </div>
               <!-- END TABLE RESULT -->
 
               <!-- BEGIN PAGINATION -->
