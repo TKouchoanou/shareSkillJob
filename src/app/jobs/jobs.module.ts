@@ -29,11 +29,12 @@ import {JobResolver} from "../shared/guards/job.resolver";
 import {CanDeactiveFormGuard} from "../shared/guards/can-deactive-form.guard";
 import {TkFormInputModule} from "tk-form-input";
 import {FlexLayoutModule} from "@angular/flex-layout";
+import {JobsLoadedGuard} from "../shared/guards/jobs-loaded.guard";
 
 
 
 
-const JOB_ROUTES:Route[]=[{path:'',component:JobContainerComponent, children:[{path:'cards', component:JobsCardComponent},
+const JOB_ROUTES:Route[]=[{path:'',component:JobContainerComponent,canActivate:[JobsLoadedGuard], children:[{path:'cards', component:JobsCardComponent},
                                                                                {path:'rows',component:JobsRowComponent},
                                                                                {path:'',redirectTo:'cards',pathMatch:'full'}]},
             {path:':index/edit', component:JobFormComponent, canDeactivate: [CanDeactiveFormGuard]},

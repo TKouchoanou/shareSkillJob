@@ -25,9 +25,10 @@ const defaultJob:Job={
 })
 export class JobsService {
 
-  db_name = "jobs";
-  defaultJob:Job=defaultJob;
-  subscription:Subscription= new Subscription();
+  private db_name = "jobs";
+  public dataIsFetched: boolean=false;
+  public  defaultJob:Job=defaultJob;
+  private subscription:Subscription= new Subscription();
   /**
    * jobs auquels on a appliqué les filtres
    */
@@ -35,7 +36,7 @@ export class JobsService {
   /**
    * jobs non filtrés
    */
-  untouchedJobs$:BehaviorSubject<Job[]> = new BehaviorSubject<Job[]>([]);
+ private untouchedJobs$:BehaviorSubject<Job[]> = new BehaviorSubject<Job[]>([]);
   sortCriteria$ :BehaviorSubject<string> = new BehaviorSubject<string>(null);
 
   /**
@@ -143,7 +144,7 @@ export class JobsService {
       .get<Job[]>(
         this.endpointurl
       ).pipe( map(this.dataMapperFn),tap((jobs)=>this.untouchedJobs$.next(jobs)),catchError(this.catchHttpErrorFn), first())
-      .subscribe();
+      .subscribe(()=>this.dataIsFetched=true);
   }
 
   get dataMapperFn(){
@@ -176,6 +177,7 @@ export class JobsService {
       this.db_name +
       ".json";
   }
+
 }
 
 
